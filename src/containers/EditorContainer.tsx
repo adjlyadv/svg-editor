@@ -1,10 +1,9 @@
 import React from 'react';
-import Path from './path';
-import Node from './node';
-
-export default class BasicLayout extends React.Component {
+import Path from '../elements/path';
 
 
+export default class EditorContainer extends React.Component {
+  
   render() {
     return(
       <svg width="500" height="500"> 
@@ -12,5 +11,4 @@ export default class BasicLayout extends React.Component {
       </svg>
     )
   }
-
 }
