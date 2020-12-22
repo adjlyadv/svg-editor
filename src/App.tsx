@@ -1,6 +1,5 @@
 import React from 'react';
-import Path from './elements/path';
-import BasciLayout from './elements/BasciLayout'
+import BasciLayout from './containers/BasciLayout'
 import './App.css';
 
 function App() {
