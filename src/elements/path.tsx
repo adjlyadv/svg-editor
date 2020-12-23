@@ -96,9 +96,7 @@ class path extends React.Component<Props, State> {
       <Fragment>
         {mockNodes.map(item => 
           <Fragment>
-            <Node posX={item.posX} posY={item.posY}/>
-            <line x1={item.posX} y1={item.posY} x2={item.ctrPosX} y2={item.ctrPosY} stroke="#2440B3" />
-            <Node posX={item.ctrPosX} posY={item.ctrPosY}/>
+            <Node posX={item.posX} posY={item.posY} ctrPosX={item.ctrPosX} ctrPosY={item.ctrPosY} />
           </Fragment>
           )}
         {/* <circle cx={this.state.x} cy={this.state.y} stroke="#55f" r="4" />

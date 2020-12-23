@@ -1,19 +1,28 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
 interface Props {
   posX: number,
-  posY: number
+  posY: number,
+  ctrPosX: number,
+  ctrPosY: number
 }
 
-const node = (Porps: { posX: number; posY: number; }) => {
+const node = (props: Props) => {
 
-  const { posX, posY } = Porps;
+  const { posX, posY, ctrPosX, ctrPosY } = props;
+
+  const handleNodeClick = (event: any) => {
+    event.stopPropagation();
+    console.log(event)
+  }
 
 
   return(
-    <circle onClick={(event) => console.log(event)} cx={posX} cy={posY} stroke="#55f" r="4">
-
-    </circle>
+    <Fragment>
+      <circle onClick={handleNodeClick} cx={posX} cy={posY} stroke="#55f" r="4" />
+        <line x1={posX} y1={posY} x2={ctrPosX} y2={ctrPosY} />
+      <circle onClick={handleNodeClick} cx={ctrPosX} cy={ctrPosY} stroke="#55f" r="4" />
+    </Fragment>
   )
 
 }
