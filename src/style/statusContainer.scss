@@ -1,0 +1,47 @@
+.statusContainer{
+    position:absolute;
+    width:200px;
+    height:100%;
+    background-color:#2f2f2c;
+    top:0;
+    right:0;
+
+}
+.statusContainer h4{
+    width:100%;
+    height:20px;
+    color:white;
+    margin-top:10px;
+}
+.statusinput{
+    background-color:#3f3f3c;
+    border-radius: 3px;
+    width:90%;
+    height:70px;
+    display: block;
+    position: relative;
+    margin:10px auto;
+}
+.statusinput input{
+    position: absolute;
+    width:50%;
+    height:100%;
+    right:0;
+    border:none;
+    outline: none;
+    background: transparent;
+    text-align: center;
+    color:#4F80FF;
+}
+
+.statusinput span{
+    display: block;
+    position: absolute;
+    width:50%;
+    height:20px;
+    top:50%;
+    transform: translateY(-50%);
+    left:5px;
+    color:#ccc;
+    text-align:center;
+}
