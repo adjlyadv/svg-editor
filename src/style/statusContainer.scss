@@ -7,12 +7,15 @@
     right:0;
 
 }
-.statusContainer h4{
-    width:100%;
-    height:20px;
-    color:white;
-    margin-top:10px;
+.statusContainer{
+    h4{
+        width:100%;
+        height:20px;
+        color:white;
+        margin-top:10px;
+    }
 }
+
 .statusinput{
     background-color:#3f3f3c;
     border-radius: 3px;
@@ -22,26 +25,38 @@
     position: relative;
     margin:10px auto;
 }
-.statusinput input{
-    position: absolute;
-    width:50%;
-    height:100%;
-    right:0;
-    border:none;
-    outline: none;
-    background: transparent;
-    text-align: center;
-    color:#4F80FF;
+
+.statusinput{
+    input{
+        position: absolute;
+        width:35%;
+        height:100%;
+        right:5px;
+        border:none;
+        outline: none;
+        background: transparent;
+        text-align: center;
+        color:#4F80FF;
+    }
+    /* 在Chrome浏览器下 */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+    }
+    /* 在Firefox浏览器下 */
+    input[type="number"]{
+            -moz-appearance: textfield;
+    }
+    span{
+        display: block;
+        position: absolute;
+        width:60%;
+        height:20px;
+        top:50%;
+        transform: translateY(-50%);
+        left:5px;
+        color:#ccc;
+        text-align:center;
+    }
 }
 
-.statusinput span{
-    display: block;
-    position: absolute;
-    width:50%;
-    height:20px;
-    top:50%;
-    transform: translateY(-50%);
-    left:5px;
-    color:#ccc;
-    text-align:center;
-}

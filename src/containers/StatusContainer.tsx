@@ -6,9 +6,9 @@ export default class StatusContainer extends React.Component {
   defaultProps = {
     X:100,
     Y:200,
-    fill:"red",
+    fill:"#ffffff",
     strokeSize:5,
-    strokeColor:"black"
+    strokeColor:"#000000"
   }
 
   inputChange = (event: any) => {
@@ -18,27 +18,27 @@ export default class StatusContainer extends React.Component {
   render() {
     return(
       <Fragment>
-        <div id = "status" className = "statusContainer">
+        <div className = "statusContainer">
             <h4>状态栏</h4>
             <label className = "statusinput">
-              <span>PositionX</span>
+              <span>PositionX:</span>
               <input type="number"  name="X" defaultValue={this.defaultProps.X} onChange={this.inputChange}/>
             </label>
             <label className = "statusinput">
-              <span>PositionY</span>
+              <span>PositionY:</span>
               <input type="number" name="Y" defaultValue = {this.defaultProps.Y} onChange = {this.inputChange}/>
             </label>
             <label className = "statusinput">
-              <span>fill</span>
-              <input type="text" name="fill" defaultValue = {this.defaultProps.fill} onChange = {this.inputChange}/>
+              <span>fill:</span>
+              <input type="color" name="fill" defaultValue = {this.defaultProps.fill} onChange = {this.inputChange}/>
             </label>
             <label className = "statusinput">
-              <span>stroke size</span>
+              <span>stroke size:</span>
               <input type="number" name="strokeSize" defaultValue = {this.defaultProps.strokeSize} onChange = {this.inputChange}/>
             </label>
             <label className = "statusinput">
-              <span>stroke color</span>
-              <input type="text" name="strokeColor" defaultValue = {this.defaultProps.strokeColor} onChange = {this.inputChange}/>
+              <span>stroke color:</span>
+              <input type="color" name="strokeColor" defaultValue = {this.defaultProps.strokeColor} onChange = {this.inputChange}/>
             </label>
         </div>
       </Fragment>
