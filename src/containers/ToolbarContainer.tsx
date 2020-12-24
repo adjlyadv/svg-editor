@@ -11,19 +11,19 @@ export default class ToolbarContainer extends React.Component {
         return (
                 <div className="Toolbar">
                     <div className="Toolitem" >
-                        <img className="itmeicon" src={mouse}/>
+                        <img className="itmeicon" src={mouse} alt="mouse"/>
                     </div>
                     <div className="Toolitem">
-                        <img className="itmeicon" src={circle}/>
+                        <img className="itmeicon" src={circle} alt="circle"/>
                     </div>
                     <div className="Toolitem">
-                        <img className="itmeicon" src={rectangle}/>
+                        <img className="itmeicon" src={rectangle} alt="rectangle"/>
                     </div>
                     <div className="Toolitem">
-                        <img className="itmeicon" src={line}/>
+                        <img className="itmeicon" src={line} alt="line"/>
                     </div>
                     <div className="Toolitem">
-                        <img className="itmeicon" src={pen}/>
+                        <img className="itmeicon" src={pen} alt="pen"/>
                     </div>
 
                 </div>

@@ -1,8 +1,6 @@
 import React, { Fragment } from 'react';
 import Node from './node';
 import Bezier from 'bezier-js';
-import node from './node';
-
 
 interface Props{
  
@@ -77,7 +75,6 @@ class path extends React.Component<Props, State> {
     const getD = (nodes: string | any[]) => {
 
       let d = "";
-      let temp = [];
       for (let i = 0; i < nodes.length; i++) {
         if (i === 0) {
           d += `M ${nodes[i].posX} ${nodes[i].posY} C ${nodes[i].ctrPosX} ${nodes[i].ctrPosY} `
@@ -104,7 +101,7 @@ class path extends React.Component<Props, State> {
        
         <path d={getD(mockNodes)} stroke-width="5" stroke="#000000" fill="none"/>
         
-        {/* <path onClick={handleOnclick} onMouseMove={handleMouse} onMouseLeave={() => console.log("leave path")} stroke-width="5" stroke="#000000" fill="none" d="M157.5,105.5C180.66667,95 148.83333,76.5 227,74C305.16667,71.5 266.5,82.5 251.5,115.5C236.5,148.5 236.5,148.5 236,148C235.5,147.5 143.5,203.5 166,151"></path> */}
+        <path onClick={handleOnclick} onMouseMove={handleMouse} onMouseLeave={() => console.log("leave path")} stroke-width="5" stroke="#000000" fill="none" d="M157.5,105.5C180.66667,95 148.83333,76.5 227,74C305.16667,71.5 266.5,82.5 251.5,115.5C236.5,148.5 236.5,148.5 236,148C235.5,147.5 143.5,203.5 166,151"></path>
       </Fragment>
     );
   }
