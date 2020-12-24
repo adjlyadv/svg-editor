@@ -1,19 +1,25 @@
-.Toolbar{
-  width: 100px;
-  height: 1080px;
-  background-color: black;
-  float: left;
+.toolbar{
+  width: 150px;
+  height:90%;
+  padding-top: 6%;
+  position:absolute;
+  background-color: #2f2f2c;
+  top:0;
+  left:0;
 }
 
-.Toolitem{
-  width: 80px;
-  height: 80px;
-  margin: 9px;
-  background-color: #282c34;
+.toolitem{
+  width: 110px;
+  height: 110px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 35px;
+  background-color: #3f3f3c;
+  border-radius: 3px;
 }
 
-.itmeicon{
-  width: 55px;
-  height: 55px;
-  padding: 10px;
+.itmeIcon{
+  width: 70px;
+  height: 70px;
+  padding: 20px;
 }
