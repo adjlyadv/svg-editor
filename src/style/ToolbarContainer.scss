@@ -16,10 +16,22 @@
   margin-bottom: 35px;
   background-color: #3f3f3c;
   border-radius: 3px;
+
 }
 
 .itmeIcon{
   width: 70px;
   height: 70px;
   padding: 20px;
+
+}
+
+.itmeIconselect{
+  width: 70px;
+  height: 70px;
+  padding: 20px;
+  position: relative;
+  filter: drop-shadow(1000px 0px #4f80ff);
+  left: -1000px;
+
 }

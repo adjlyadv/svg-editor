@@ -5,11 +5,7 @@ import pen from '../asset/pen.svg'
 import mouse from '../asset/mouse.svg'
 import line from '../asset/line.svg'
 import rectangle from '../asset/rectangle.svg'
-import circle_select from '../asset/circle_select.svg'
-import pen_select from '../asset/pen_select.svg'
-import mouse_select from '../asset/mouse_select.svg'
-import line_select from '../asset/line_select.svg'
-import rectangle_select from '../asset/rectangle_select.svg'
+
 export default class ToolbarContainer extends React.Component<any,any> {
 
     handleClick(e:any){
@@ -21,19 +17,19 @@ export default class ToolbarContainer extends React.Component<any,any> {
         return (
                 <div className="toolbar">
                     <div className="toolitem" onClick={this.handleClick.bind(this)} >
-                        <img className="itmeIcon" id="mouse"  alt="" src={this.props.currentTool==="mouse"?mouse_select:mouse}/>
+                        <img className={this.props.currentTool==="mouse"?"itmeIconselect":"itmeIcon"} id="mouse"  alt="" src={mouse}/>
                     </div>
                     <div className="toolitem" onClick={this.handleClick.bind(this)}>
-                        <img className="itmeIcon" id="circle" alt="" src={this.props.currentTool==="circle"?circle_select:circle}/>
+                        <img className={this.props.currentTool==="circle"?"itmeIconselect":"itmeIcon"} id="circle" alt="" src={circle}/>
                     </div>
                     <div className="toolitem" onClick={this.handleClick.bind(this)}>
-                        <img className="itmeIcon" id="rectangle" alt="" src={this.props.currentTool==="rectangle"?rectangle_select:rectangle}/>
+                        <img className={this.props.currentTool==="rectangle"?"itmeIconselect":"itmeIcon"} id="rectangle" alt="" src={rectangle}/>
                     </div>
                     <div className="toolitem" onClick={this.handleClick.bind(this)}>
-                        <img className="itmeIcon" id="line" alt="" src={this.props.currentTool==="line"?line_select:line}/>
+                        <img className={this.props.currentTool==="line"?"itmeIconselect":"itmeIcon"} id="line" alt="" src={line}/>
                     </div>
                     <div className="toolitem" onClick={this.handleClick.bind(this)}>
-                        <img className="itmeIcon" id="pen" alt="" src={this.props.currentTool==="pen"?pen_select:pen}/>
+                        <img className={this.props.currentTool==="pen"?"itmeIconselect":"itmeIcon"} id="pen" alt="" src={pen}/>
                     </div>
 
                 </div>
