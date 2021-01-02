@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/svg-editor/static/css/main.7d84f484.chunk.css",
-    "main.js": "/svg-editor/static/js/main.b1972112.chunk.js",
-    "main.js.map": "/svg-editor/static/js/main.b1972112.chunk.js.map",
+    "main.js": "/svg-editor/static/js/main.c6081500.chunk.js",
+    "main.js.map": "/svg-editor/static/js/main.c6081500.chunk.js.map",
     "runtime-main.js": "/svg-editor/static/js/runtime-main.d995c6d4.js",
     "runtime-main.js.map": "/svg-editor/static/js/runtime-main.d995c6d4.js.map",
     "static/js/2.90e4a2de.chunk.js": "/svg-editor/static/js/2.90e4a2de.chunk.js",
@@ -22,6 +22,6 @@
     "static/js/runtime-main.d995c6d4.js",
     "static/js/2.90e4a2de.chunk.js",
     "static/css/main.7d84f484.chunk.css",
-    "static/js/main.b1972112.chunk.js"
+    "static/js/main.c6081500.chunk.js"
   ]
 }
