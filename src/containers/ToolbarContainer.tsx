@@ -17,21 +17,20 @@ export default class ToolbarContainer extends React.Component<any,any> {
         return (
                 <div className="toolbar">
                     <div className="toolitem" onClick={this.handleClick.bind(this)} >
-                        <img className={this.props.currentTool==="mouse"?"itmeIconselect":"itmeIcon"} id="mouse"  alt="" src={mouse}/>
+                        <img className={this.props.currentTool==="mouse"?"itmeIconselect":"itmeIcon"} id="mouse"  alt="mouse" src={mouse}/>
                     </div>
                     <div className="toolitem" onClick={this.handleClick.bind(this)}>
-                        <img className={this.props.currentTool==="circle"?"itmeIconselect":"itmeIcon"} id="circle" alt="" src={circle}/>
+                        <img className={this.props.currentTool==="circle"?"itmeIconselect":"itmeIcon"} id="circle" alt="circle" src={circle}/>
                     </div>
                     <div className="toolitem" onClick={this.handleClick.bind(this)}>
-                        <img className={this.props.currentTool==="rectangle"?"itmeIconselect":"itmeIcon"} id="rectangle" alt="" src={rectangle}/>
+                        <img className={this.props.currentTool==="rectangle"?"itmeIconselect":"itmeIcon"} id="rectangle" alt="rectangle" src={rectangle}/>
                     </div>
                     <div className="toolitem" onClick={this.handleClick.bind(this)}>
-                        <img className={this.props.currentTool==="line"?"itmeIconselect":"itmeIcon"} id="line" alt="" src={line}/>
+                        <img className={this.props.currentTool==="line"?"itmeIconselect":"itmeIcon"} id="line" alt="line" src={line}/>
                     </div>
                     <div className="toolitem" onClick={this.handleClick.bind(this)}>
-                        <img className={this.props.currentTool==="pen"?"itmeIconselect":"itmeIcon"} id="pen" alt="" src={pen}/>
+                        <img className={this.props.currentTool==="pen"?"itmeIconselect":"itmeIcon"} id="pen" alt="pen" src={pen}/>
                     </div>
-
                 </div>
         )
     }
