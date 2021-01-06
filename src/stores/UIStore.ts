@@ -1,4 +1,4 @@
-import { action, computed, makeAutoObservable, observable } from 'mobx';
+import { action, makeAutoObservable, observable } from 'mobx';
 
 export interface Node {
   posX: number,

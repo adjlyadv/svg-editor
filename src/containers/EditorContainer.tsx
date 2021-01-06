@@ -1,5 +1,5 @@
 import React from 'react';
-import { UIStore, Path as typePath } from '../stores/UIStore';
+import { UIStore } from '../stores/UIStore';
 import Path from '../elements/path';
 import '../style/EditorContainer.scss';
 
