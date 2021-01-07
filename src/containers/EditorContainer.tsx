@@ -1,23 +1,45 @@
 import React from 'react';
-import { observer } from 'mobx-react';
-import { UIStore } from '../stores/UIStore';
+import { UIStore, Path as typePath } from '../stores/UIStore';
 import Path from '../elements/path';
+import '../style/EditorContainer.scss';
 
-@observer
-export default class EditorContainer extends React.Component {
+interface State{
+  
+}
 
-  handleEditorClick = (event: any) => {
-    console.log(event)
+interface Poprs{
+
+}
+
+export default class EditorContainer extends React.Component<Poprs, State> {
+  edtiorRef: React.RefObject<SVGSVGElement>;
+
+  constructor(props: Poprs) {
+    super(props);
+    this.edtiorRef = React.createRef();
+  }
+
+  componentDidMount() {
+    const editorInfo = this.edtiorRef.current?.getBoundingClientRect();
+    if (editorInfo) {
+      UIStore.editorInfo.top = editorInfo.top;
+      UIStore.editorInfo.left = editorInfo.left;
+    }
   }
 
   render() {
 
     const editorInfo = UIStore.editorInfo;
+    const pathList = UIStore.pathList;
 
     return(
-      <svg onClick={this.handleEditorClick} width={editorInfo.width} height={editorInfo.height}> 
-        <Path />
-      </svg>
+      <div className="editor-container">
+        <svg ref={this.edtiorRef} className="editor-svg" width={editorInfo.width} height={editorInfo.height}> 
+          {pathList.map(path => (
+            <Path path={path} />
+          ))}
+        </svg>
+      </div>
     )
   }
 }

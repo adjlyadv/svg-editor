@@ -1,8 +1,9 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import EditorContainer from './EditorContainer';
 import StatusContainer from './StatusContainer';
 import '../style/index.scss';
 import ToolbarContainer from "./ToolbarContainer";
+import '../style/BasicContainer.scss'
 
 export default class BasicLayout extends React.Component<any,any> {
 
@@ -25,7 +26,7 @@ export default class BasicLayout extends React.Component<any,any> {
         <ToolbarContainer currentTool={this.state.currentTool} set={this.setCurrenttool.bind(this)}/>
         <EditorContainer />
         <StatusContainer />
-      </Fragment>
+      </div>
     )
   }
 
