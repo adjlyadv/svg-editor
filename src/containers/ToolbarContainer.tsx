@@ -6,7 +6,15 @@ import mouse from '../asset/mouse.svg'
 import line from '../asset/line.svg'
 import rectangle from '../asset/rectangle.svg'
 
-export default class ToolbarContainer extends React.Component<any,any> {
+interface State{
+
+}
+interface Prpos{
+    currentTool:string;
+    set:(arg0: string)=>void;
+}
+
+export default class ToolbarContainer extends React.Component<Prpos,State> {
 
     handleClick(e:any){
         this.props.set(e.target.id)
