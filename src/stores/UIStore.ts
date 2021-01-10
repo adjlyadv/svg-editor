@@ -1,4 +1,4 @@
-import { action, makeAutoObservable, observable } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 
 export interface Node {
   posX: number,
@@ -13,13 +13,13 @@ export interface Path {
 }
 
 class UIstore {
-  @observable editorInfo = {
+  editorInfo = {
     width: 800,
     height: 600,
     left: 0,
     top: 0
   }
-  @observable pathList: Path[] = [];
+  pathList: Path[] = [];
 
   constructor() {
     makeAutoObservable(this);
@@ -46,11 +46,11 @@ class UIstore {
   }
   
 
-  @action setEditorInfo = (width: number, height: number) => {
+  setEditorInfo = (width: number, height: number) => {
     
   }
 
-  @action setNodes = (pathId: number, nodeId: number, node: Node) => {
+  setNodes = (pathId: number, nodeId: number, node: Node) => {
     this.pathList[pathId].nodes[nodeId] = node;
   }
   
