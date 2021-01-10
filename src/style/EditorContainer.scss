@@ -1,0 +1,11 @@
+.editor-container {
+  flex-grow: 1;
+  background: -webkit-gradient(radial, center center, 3, center center, 1000, from(#bbb), to(#222));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .editor-svg {
+    background: white;
+  }
+}
