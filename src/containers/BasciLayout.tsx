@@ -22,7 +22,7 @@ export default class BasicLayout extends React.Component<any,any> {
 
   render() {
     return(
-      <Fragment>
+      <div className="basic-container">
         <ToolbarContainer currentTool={this.state.currentTool} set={this.setCurrenttool.bind(this)}/>
         <EditorContainer />
         <StatusContainer />
