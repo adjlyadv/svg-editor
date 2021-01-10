@@ -1,44 +1,47 @@
+
 import React, { Fragment } from 'react';
 import '../style/statusContainer.scss';
-export default class StatusContainer extends React.Component {
+import { UIStore } from '../stores/UIStore';
 
-  //值的初始值
-  defaultProps = {
-    X:100,
-    Y:200,
-    fill:"#ffffff",
-    strokeSize:5,
-    strokeColor:"#000000"
-  }
+interface State{
 
+}
+interface Props{
+
+}
+export default class StatusContainer extends React.Component <Props,State>{
+  
   inputChange = (event: any) => {
-    console.log(event.target.name,event.target.value)//拿到设定的值
+    let name = event.target.name;
+    let value = event.target.value;
+      UIStore.setStateInfo(0,name,value);
   }
 
   render() {
+    const pathInfo = UIStore.pathList[0];
     return(
       <Fragment>
         <div className = "statusContainer">
             <h4>状态栏</h4>
             <label className = "statusinput">
               <span>PositionX:</span>
-              <input type="number"  name="X" defaultValue={this.defaultProps.X} onChange={this.inputChange}/>
+              <input type="number"  name="X" defaultValue={pathInfo.nodes[0].posX} onChange={this.inputChange}/>
             </label>
             <label className = "statusinput">
               <span>PositionY:</span>
-              <input type="number" name="Y" defaultValue = {this.defaultProps.Y} onChange = {this.inputChange}/>
+              <input type="number" name="Y" defaultValue = {pathInfo.nodes[0].posY} onChange = {this.inputChange}/>
             </label>
             <label className = "statusinput">
               <span>fill:</span>
-              <input type="color" name="fill" defaultValue = {this.defaultProps.fill} onChange = {this.inputChange}/>
+              <input type="color" name="fill" defaultValue = {pathInfo.fill} onChange = {this.inputChange}/>
             </label>
             <label className = "statusinput">
-              <span>stroke size:</span>
-              <input type="number" name="strokeSize" defaultValue = {this.defaultProps.strokeSize} onChange = {this.inputChange}/>
+              <span>stroke Width:</span>
+              <input type="number" name="strokeWidth" min = "0" max = "40" defaultValue = {pathInfo.strokeWidth} onChange = {this.inputChange}/>
             </label>
             <label className = "statusinput">
-              <span>stroke color:</span>
-              <input type="color" name="strokeColor" defaultValue = {this.defaultProps.strokeColor} onChange = {this.inputChange}/>
+              <span>stroke:</span>
+              <input type="color" name="stroke" defaultValue = {pathInfo.stroke} onChange = {this.inputChange}/>
             </label>
         </div>
       </Fragment>
