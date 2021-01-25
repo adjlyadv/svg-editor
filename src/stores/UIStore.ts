@@ -9,7 +9,10 @@ export interface Node {
 
 export interface Path {
   id: number,
-  nodes: Node[]
+  nodes: Node[],
+  strokeWidth: number,
+  stroke: string,
+  fill:string
 }
 
 class UIstore {
@@ -39,7 +42,10 @@ class UIstore {
             ctrPosX: 148.8,
             ctrPosY: 76.5,
           },
-        ]
+        ],
+        strokeWidth: 5,
+        stroke: "#000000",
+        fill: "#ffffff"
       }
     )
 
@@ -53,7 +59,30 @@ class UIstore {
   setNodes = (pathId: number, nodeId: number, node: Node) => {
     this.pathList[pathId].nodes[nodeId] = node;
   }
-  
+  setStateInfo = (pathId: number, name:string, value:string) => {
+    switch(name){
+      case 'X':
+        let node1 = this.pathList[0].nodes[0];
+        node1.posX = Number(value);
+        this.setNodes(0, 0,node1);
+        break;
+      case 'Y':
+        let node2 = this.pathList[0].nodes[0];
+        node2.posY = Number(value)
+        this.setNodes(0, 0,node2);
+        break;
+      case 'fill':
+        this.pathList[pathId].fill = value;
+        break;
+      case 'strokeWidth':
+        this.pathList[pathId].strokeWidth = Number(value);
+        break;
+      case 'stroke':
+        this.pathList[pathId].stroke = value;
+        break;
+      default:        
+    }
+  }
 }
 
 export const UIStore = new UIstore();

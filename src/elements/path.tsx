@@ -8,6 +8,9 @@ interface Props{
   path: {
     id: number,
     nodes: typeNode[],
+    strokeWidth: number,
+    stroke: string,
+    fill:string
   }
 }
 
@@ -59,7 +62,7 @@ class path extends React.Component<Props, State> {
         {/* <circle cx={this.state.x} cy={this.state.y} stroke="#55f" r="4" />
         <circle cx={this.state.ctrX} cy={this.state.ctrY} stroke="#55f" r="4" /> */}
        
-        <path d={this.getD(nodes)} strokeWidth="5" stroke="#000000" fill="none"/>
+        <path d={this.getD(nodes)} strokeWidth={this.props.path.strokeWidth} stroke={this.props.path.stroke}fill={this.props.path.fill}/>
         
         {/* <path onClick={handleOnclick} onMouseMove={handleMouse} onMouseLeave={() => console.log("leave path")} strokeWidth="5" stroke="#000000" fill="none" d="M157.5,105.5C180.66667,95 148.83333,76.5 227,74C305.16667,71.5 266.5,82.5 251.5,115.5C236.5,148.5 236.5,148.5 236,148C235.5,147.5 143.5,203.5 166,151"></path> */}
       </Fragment>
