@@ -1,45 +1,39 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { UIStore } from '../stores/UIStore';
 import Path from '../elements/path';
 import '../style/EditorContainer.scss';
 
-interface State{
-  
-}
+const EditorContainer: React.FC<{}> = () =>  {
 
-interface Poprs{
+  useEffect(() => {
+    if (!edtiorRef) {
+      return
+    }
 
-}
+    const editorInfo = edtiorRef?.current?.getBoundingClientRect();
 
-export default class EditorContainer extends React.Component<Poprs, State> {
-  edtiorRef: React.RefObject<SVGSVGElement>;
-
-  constructor(props: Poprs) {
-    super(props);
-    this.edtiorRef = React.createRef();
-  }
-
-  componentDidMount() {
-    const editorInfo = this.edtiorRef.current?.getBoundingClientRect();
     if (editorInfo) {
       UIStore.editorInfo.top = editorInfo.top;
       UIStore.editorInfo.left = editorInfo.left;
     }
-  }
+  }, [])
 
-  render() {
+  const edtiorRef = useRef<SVGSVGElement>(null);
 
-    const editorInfo = UIStore.editorInfo;
-    const pathList = UIStore.pathList;
+  
+  const editorInfo = UIStore.editorInfo;
+  const pathList = UIStore.pathList;
 
-    return(
-      <div className="editor-container">
-        <svg ref={this.edtiorRef} className="editor-svg" width={editorInfo.width} height={editorInfo.height}> 
-          {pathList.map(path => (
-            <Path path={path} />
-          ))}
-        </svg>
-      </div>
-    )
-  }
+  return(
+    <div className="editor-container">
+      <svg ref={edtiorRef} className="editor-svg" width={editorInfo.width} height={editorInfo.height}> 
+        {pathList.map(path => (
+          <Path path={path} />
+        ))}
+      </svg>
+    </div>
+  )
+
 }
+
+export default EditorContainer;
