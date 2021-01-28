@@ -8,4 +8,11 @@
   .editor-svg {
     background: white;
   }
+
+  .point-control {
+    cursor: move;
+    fill: #0FF;
+    stroke: #55f;
+    r: 4;
+  }
 }
