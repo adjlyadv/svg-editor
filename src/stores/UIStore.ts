@@ -55,12 +55,6 @@ class UIstore {
             ctrPosX: 309.5,
             ctrPosY: 309.5,
           },
-          {
-            posX: 327,
-            posY: 174,
-            ctrPosX: 248.8,
-            ctrPosY: 176.5,
-          }
         ],
         strokeWidth: 5,
         stroke: "#000000",

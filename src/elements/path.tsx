@@ -79,7 +79,7 @@ const path: React.FC<Props> = observer((props: Props) => {
       );
     }
 
-    const paths = getEditingPath()
+    const paths = getEditingPath();
 
     return (
       <Fragment>
@@ -87,7 +87,7 @@ const path: React.FC<Props> = observer((props: Props) => {
           paths.map(item => 
             <Fragment>
               <path d={item.attrD} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke}fill={props.path.fill}/>
-              {item.nodes.map((node, index) => 
+              {nodes.map((node, index) => 
                 <Node node={node} id={index} pathId={id} />
               )}
             </Fragment>
