@@ -26,7 +26,7 @@ const EditorContainer: React.FC<{}> = () =>  {
   
   
   useEffect(() => {
-    UIStore.setNodes(pathid, nodeid, node);
+    UIStore.setNodes(UIStore.mouseState.pathid, UIStore.mouseState.nodeid, node);
   }, [node])
 
   const handleMouseDown = (event: any) => {
