@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/svg-editor/static/css/main.cf1aefc6.chunk.css",
-    "main.js": "/svg-editor/static/js/main.f4293ac8.chunk.js",
-    "main.js.map": "/svg-editor/static/js/main.f4293ac8.chunk.js.map",
+    "main.js": "/svg-editor/static/js/main.c4acf300.chunk.js",
+    "main.js.map": "/svg-editor/static/js/main.c4acf300.chunk.js.map",
     "runtime-main.js": "/svg-editor/static/js/runtime-main.652468f3.js",
     "runtime-main.js.map": "/svg-editor/static/js/runtime-main.652468f3.js.map",
-    "static/js/2.0d8fcc92.chunk.js": "/svg-editor/static/js/2.0d8fcc92.chunk.js",
-    "static/js/2.0d8fcc92.chunk.js.map": "/svg-editor/static/js/2.0d8fcc92.chunk.js.map",
+    "static/js/2.57f3d488.chunk.js": "/svg-editor/static/js/2.57f3d488.chunk.js",
+    "static/js/2.57f3d488.chunk.js.map": "/svg-editor/static/js/2.57f3d488.chunk.js.map",
     "static/js/3.8133e4e8.chunk.js": "/svg-editor/static/js/3.8133e4e8.chunk.js",
     "static/js/3.8133e4e8.chunk.js.map": "/svg-editor/static/js/3.8133e4e8.chunk.js.map",
     "index.html": "/svg-editor/index.html",
     "static/css/main.cf1aefc6.chunk.css.map": "/svg-editor/static/css/main.cf1aefc6.chunk.css.map",
-    "static/js/2.0d8fcc92.chunk.js.LICENSE.txt": "/svg-editor/static/js/2.0d8fcc92.chunk.js.LICENSE.txt",
+    "static/js/2.57f3d488.chunk.js.LICENSE.txt": "/svg-editor/static/js/2.57f3d488.chunk.js.LICENSE.txt",
     "static/media/circle.292ce4e1.svg": "/svg-editor/static/media/circle.292ce4e1.svg",
     "static/media/line.86048c7a.svg": "/svg-editor/static/media/line.86048c7a.svg",
     "static/media/mouse.dfeff54d.svg": "/svg-editor/static/media/mouse.dfeff54d.svg",
@@ -20,8 +20,8 @@
   },
   "entrypoints": [
     "static/js/runtime-main.652468f3.js",
-    "static/js/2.0d8fcc92.chunk.js",
+    "static/js/2.57f3d488.chunk.js",
     "static/css/main.cf1aefc6.chunk.css",
-    "static/js/main.f4293ac8.chunk.js"
+    "static/js/main.c4acf300.chunk.js"
   ]
 }
