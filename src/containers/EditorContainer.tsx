@@ -1,8 +1,9 @@
 import React, { useEffect, useRef , useState} from 'react';
 import { Node as typeNode,UIStore } from '../stores/UIStore';
 import Path from '../elements/path';
-import '../style/EditorContainer.scss';
 import { getRelativePositon } from '../utils/calculate';
+import * as _ from 'lodash';
+import '../style/EditorContainer.scss';
 
 const EditorContainer: React.FC<{}> = () =>  {
   useEffect(() => {
@@ -42,7 +43,7 @@ const EditorContainer: React.FC<{}> = () =>  {
     });
   }
 
-  const handleMouseMove = (event: any) => {
+  const handleMouseMove = _.debounce((event: any) => {
     event.stopPropagation();
     if(!UIStore.mouseState.drugging){
       return
@@ -67,7 +68,7 @@ const EditorContainer: React.FC<{}> = () =>  {
     })
   }
 
-}
+}, 5, { 'trailing': true })
   
   const handleMouseUp = (event: any) => {
     event.stopPropagation();

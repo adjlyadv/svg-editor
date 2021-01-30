@@ -38,47 +38,30 @@ class UIstore {
         id: 0,
         nodes: [
           {
-            posX: 157.5,
-            posY: 105.5,
-            ctrPosX: 180,
-            ctrPosY: 95,
+            posX: 125.5,
+            posY: 171.5,
+            ctrPosX: 194.5,
+            ctrPosY: 85.5
           },
           {
-            posX: 227,
-            posY: 74,
-            ctrPosX: 148.8,
-            ctrPosY: 76.5,
-          }
+            posX: 246.5,
+            posY: 140.5,
+            ctrPosX: 288.5,
+            ctrPosY: 95.5,
+          },
+          {
+            posX: 210,
+            posY: 261,
+            ctrPosX: 309.5,
+            ctrPosY: 309.5,
+          },
         ],
         strokeWidth: 5,
         stroke: "#000000",
         fill: "none"
       }
     )
-
-    this.pathList.push(
-      {
-        id: 1,
-        nodes: [
-          {
-            posX: 257.5,
-            posY: 205.5,
-            ctrPosX: 280,
-            ctrPosY: 195,
-          },
-          {
-            posX: 327,
-            posY: 174,
-            ctrPosX: 248.8,
-            ctrPosY: 176.5,
-          }
-        ],
-        strokeWidth: 5,
-        stroke: "#000000",
-        fill: "none"
-      }
-    )
-
+    // M125.5,171.5C194.5,85.5 288.5,95.5 246.5,140.5C204.5,185.5 309.5,309.5 210,261
   }
   setEditorInfo = (width: number, height: number) => {
     

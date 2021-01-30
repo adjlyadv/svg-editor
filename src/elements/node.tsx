@@ -24,9 +24,9 @@ const Node = observer((props: Props) => {
   
   return(
     <Fragment>
-      <circle onMouseDown={(e) => handleMouseDown(true, e)} cx={node.posX} cy={node.posY} stroke="#55f" r="4" />
+      <circle className="point-control" onMouseDown={(e) => handleMouseDown(true, e)} cx={node.posX} cy={node.posY} stroke="#55f" r="4" />
         <line x1={node.posX} y1={node.posY} x2={node.ctrPosX} y2={node.ctrPosY} stroke="#555" strokeWidth="1" />
-      <circle onMouseDown={(e) => handleMouseDown(false, e)} cx={node.ctrPosX} cy={node.ctrPosY} stroke="#55f" r="4" />
+      <circle className="point-control" onMouseDown={(e) => handleMouseDown(false, e)} cx={node.ctrPosX} cy={node.ctrPosY} stroke="#55f" r="4" />
     </Fragment>
   )
 
