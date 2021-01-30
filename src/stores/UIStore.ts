@@ -66,17 +66,40 @@ class UIstore {
   setEditorInfo = (width: number, height: number) => {
     
   }
-
+  addPath = () => {
+    this.pathList.push(
+        {
+          id: this.pathList.length+1,
+          nodes: [],
+          strokeWidth: 5,
+          stroke: "#000000",
+          fill: "#ffffff"
+        }
+    )
+    return this.pathList.length;
+  }
   setNodes = (pathId: number, nodeId: number, node: Node) => {
     this.pathList[pathId].nodes[nodeId] = node;
   }
 
+  addNodes =(pathId: number , posX: number, posY: number) => {
+    this.pathList[pathId-1].nodes.push(
+        {
+          posX: posX,
+          posY: posY,
+          ctrPosX:posX,
+          ctrPosY:posY,
+        }
+    )
+
+  }
   setMouseState = (type:boolean,dragging:boolean,pathid:number,nodeid:number) => {
     this.mouseState.pathid = pathid;
-      this.mouseState.nodeid = nodeid;
-      this.mouseState.type = type;//为真是锚点，为假是控制点
-      this.mouseState.drugging = dragging;
+    this.mouseState.nodeid = nodeid;
+    this.mouseState.type = type;//为真是锚点，为假是控制点
+    this.mouseState.drugging = dragging;
   }
+
   setStateInfo = (pathId: number, name:string, value:string) => {
     switch(name){
       case 'X':
