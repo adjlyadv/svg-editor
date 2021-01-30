@@ -5,6 +5,7 @@ import '../style/index.scss';
 import ToolbarContainer from "./ToolbarContainer";
 import '../style/BasicContainer.scss'
 
+
 const BasicLayout = () => {
 
   const [currentTool, setCurrenttool] = useState("mouse");
@@ -12,7 +13,7 @@ const BasicLayout = () => {
   return(
     <div className="basic-container">
       <ToolbarContainer currentTool={currentTool} set={setCurrenttool}/>
-      <EditorContainer />
+      <EditorContainer currentTool={currentTool}/>
       <StatusContainer />
     </div>
   )

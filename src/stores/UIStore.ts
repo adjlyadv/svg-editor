@@ -3,8 +3,8 @@ import { makeAutoObservable } from 'mobx';
 export interface Node {
   posX: number,
   posY: number,
-  ctrPosX: number,
-  ctrPosY: number
+  ctrPosX: number|undefined,
+  ctrPosY: number|undefined
 }
 
 export interface Path {
@@ -55,9 +55,30 @@ class UIstore {
   setEditorInfo = (width: number, height: number) => {
     
   }
-
+  addPath = () => {
+    this.pathList.push(
+        {
+          id: this.pathList.length+1,
+          nodes: [],
+          strokeWidth: 5,
+          stroke: "#000000",
+          fill: "#ffffff"
+        }
+    )
+    return this.pathList.length;
+  }
   setNodes = (pathId: number, nodeId: number, node: Node) => {
     this.pathList[pathId].nodes[nodeId] = node;
+  }
+  addNodes =(pathId: number , posX: number, posY: number) => {
+    this.pathList[pathId-1].nodes.push(
+        {
+          posX: posX,
+          posY: posY,
+          ctrPosX:undefined,
+          ctrPosY:undefined,
+        }
+    )
   }
   setStateInfo = (pathId: number, name:string, value:string) => {
     switch(name){
