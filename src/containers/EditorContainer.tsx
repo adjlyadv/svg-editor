@@ -86,11 +86,11 @@ const EditorContainer: React.FC<Props> = ({currentTool}) =>  {
     clearTimeout(clickTimeChange);
     clickTimeChange = setTimeout(
         () => {
-          if(editing.current==false){
+          if(editing.current===false){
             editing.current=true
           }
           else{
-            if(currentTool=="pen"&&pathId.current==-1){
+            if(currentTool==="pen"&&pathId.current===-1){
               pathId.current=UIStore.addPath();
             }
             console.log(pathId.current)
