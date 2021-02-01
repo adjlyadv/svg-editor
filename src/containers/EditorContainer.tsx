@@ -23,7 +23,7 @@ const EditorContainer: React.FC<Props> = ({currentTool}) =>  {
 
   const edtiorRef = useRef<SVGSVGElement>(null);
   var clickTimeChange:any;
-  const pathId=useRef(-1)
+  const pathId = useRef(-1)
   const editorInfo = UIStore.editorInfo;
   const pathList = UIStore.pathList;
   let pathid = UIStore.mouseState.pathid;
@@ -81,16 +81,16 @@ const EditorContainer: React.FC<Props> = ({currentTool}) =>  {
     event.stopPropagation();
     UIStore.setMouseState(false,false,pathid,nodeid);
   }
-  const editing=useRef(true)
-  const pathClick:any=(e:any)=>{
+  const editing = useRef(true)
+  const pathClick:any = (e:any) => {
     clearTimeout(clickTimeChange);
     clickTimeChange = setTimeout(
         () => {
-          if(editing.current===false){
-            editing.current=true
+          if(editing.current === false){
+            editing.current = true
           }
           else{
-            if(currentTool==="pen"&&pathId.current===-1){
+            if(currentTool === "pen" && pathId.current === -1){
               pathId.current=UIStore.addPath();
             }
 
@@ -102,10 +102,10 @@ const EditorContainer: React.FC<Props> = ({currentTool}) =>  {
     );
 
   }
-  const pathDoubleClick:any=()=>{
+  const pathDoubleClick:any = () => {
     clearTimeout(clickTimeChange);
-    editing.current=false
-    pathId.current=-1
+    editing.current = false
+    pathId.current = -1
   }
 
   return(
