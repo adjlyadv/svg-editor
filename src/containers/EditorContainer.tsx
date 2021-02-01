@@ -93,9 +93,8 @@ const EditorContainer: React.FC<Props> = ({currentTool}) =>  {
             if(currentTool==="pen"&&pathId.current===-1){
               pathId.current=UIStore.addPath();
             }
-            console.log(pathId.current)
-            console.log(UIStore.pathList)
-            UIStore.addNodes(pathId.current,e.pageX-150,e.pageY-128)
+
+            UIStore.addNodes(pathId.current,e.pageX-editorInfo.left,e.pageY-editorInfo.top)
           }
 
         },
@@ -105,7 +104,6 @@ const EditorContainer: React.FC<Props> = ({currentTool}) =>  {
   }
   const pathDoubleClick:any=()=>{
     clearTimeout(clickTimeChange);
-    console.log("双击")
     editing.current=false
     pathId.current=-1
   }
