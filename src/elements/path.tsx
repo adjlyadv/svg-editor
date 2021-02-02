@@ -68,13 +68,18 @@ const path: React.FC<Props> = observer((props: Props) => {
       return paths
     }
 
+    const handleDoubleClick = (event: any) => {
+      event.stopPropagation();
+      setEditing(true);
+    }
+
     const [editing, setEditing] = useState<boolean>(false);
     const { id, nodes } = props.path;
 
     if (!editing) {
       return (
         <Fragment>
-          <path onDoubleClick={() => setEditing(true)} d={getD(nodes)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke}fill={props.path.fill}/>
+          <path onDoubleClick={handleDoubleClick} d={getD(nodes)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke}fill={props.path.fill}/>
         </Fragment>
       );
     }
