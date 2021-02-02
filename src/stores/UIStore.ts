@@ -16,6 +16,7 @@ export interface Path {
 }
 
 class UIstore {
+
   editorInfo = {
     width: 800,
     height: 600,
@@ -23,8 +24,8 @@ class UIstore {
     top: 0
   }
   mouseState ={
-    type:false,
-    drugging:false,
+    type: false,
+    drugging: false,
     pathid: 0,
     nodeid: 0
   }
@@ -63,13 +64,11 @@ class UIstore {
     )
     // M125.5,171.5C194.5,85.5 288.5,95.5 246.5,140.5C204.5,185.5 309.5,309.5 210,261
   }
-  setEditorInfo = (width: number, height: number) => {
-    
-  }
+
   addPath = () => {
     this.pathList.push(
         {
-          id: this.pathList.length+1,
+          id: this.pathList.length,
           nodes: [],
           strokeWidth: 5,
           stroke: "#000000",

@@ -1,9 +1,10 @@
 import React, { useEffect, useRef , useState} from 'react';
-import { Node as typeNode,UIStore } from '../stores/UIStore';
+import { Node as typeNode, UIStore } from '../stores/UIStore';
 import Path from '../elements/path';
 import { getRelativePositon } from '../utils/calculate';
 import * as _ from 'lodash';
 import '../style/EditorContainer.scss';
+
 interface Props{
   currentTool:string
 }
@@ -18,14 +19,16 @@ const EditorContainer: React.FC<Props> = ({currentTool}) =>  {
     if (editorInfo) {
       UIStore.editorInfo.top = editorInfo.top;
       UIStore.editorInfo.left = editorInfo.left;
+      setEditorInfo(editorInfo);
     }
   }, [])
 
   const edtiorRef = useRef<SVGSVGElement>(null);
   var clickTimeChange:any;
-  const editing = useRef(true)
-  const pathId = useRef(-1)
-  const editorInfo = UIStore.editorInfo;
+  const [editing, setEditing] = useState<boolean>(true)
+  const [pathId, setPathId] = useState<number>(-1)
+  const [editorInfo, setEditorInfo] = useState(UIStore.editorInfo);
+
   const pathList = UIStore.pathList;
   let pathid = UIStore.mouseState.pathid;
   let nodeid = UIStore.mouseState.nodeid;
@@ -76,7 +79,7 @@ const EditorContainer: React.FC<Props> = ({currentTool}) =>  {
     })
   }
 
-}, 5, { 'trailing': true })
+  }, 5, { 'trailing': true })
   
   const handleMouseUp = (event: any) => {
     event.stopPropagation();
@@ -84,19 +87,25 @@ const EditorContainer: React.FC<Props> = ({currentTool}) =>  {
   }
 
   const pathClick:any = (e:any) => {
+    e.stopPropagation();
     clearTimeout(clickTimeChange);
     clickTimeChange = setTimeout(
         () => {
-          if(editing.current === false){
-            editing.current = true
-          }
-          else{
-            if(currentTool === "pen" && pathId.current === -1){
-              pathId.current = UIStore.addPath();
+          switch(currentTool) {
+            case "pen": {
+              if(!editing){
+                setEditing(true);
+              }
+              else{
+                let _pathId = pathId;
+                if(currentTool === "pen" && pathId === -1){
+                  _pathId = UIStore.addPath()
+                  setPathId(_pathId);
+                }
+                UIStore.addNodes(_pathId, e.pageX-editorInfo.left,e.pageY-editorInfo.top)
+              }
             }
-            UIStore.addNodes(pathId.current,e.pageX-editorInfo.left,e.pageY-editorInfo.top)
           }
-
         },
         300
     );
@@ -105,8 +114,8 @@ const EditorContainer: React.FC<Props> = ({currentTool}) =>  {
   
   const pathDoubleClick:any = () => {
     clearTimeout(clickTimeChange);
-    editing.current = false
-    pathId.current = -1
+    setEditing(false);
+    setPathId(-1);
   }
 
   return(
@@ -115,7 +124,7 @@ const EditorContainer: React.FC<Props> = ({currentTool}) =>  {
            onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}
            onDoubleClick={pathDoubleClick} onClick={pathClick}>
         {pathList.map(path => (
-          <Path path={path}/>
+          <Path key={path.id} path={path}/>
         ))}
       </svg>
     </div>
