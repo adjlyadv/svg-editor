@@ -24,7 +24,18 @@ const EditorContainer: React.FC<Props> = (props) =>  {
       UIStore.editorInfo.left = editorInfo.left;
       setEditorInfo(editorInfo);
     }
+
   }, [])
+
+  //cucurrentTool改变
+  useEffect(() => {
+    if (currentTool !== "pen") {
+      setStartNode({posX: -1, posY: -1});
+      console.log("qing")
+      setPathId(-1);
+
+    }
+  },[currentTool])
 
   const edtiorRef = useRef<SVGSVGElement>(null);
   var clickTimeChange:any;
