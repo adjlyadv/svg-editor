@@ -1,17 +1,21 @@
-
+import { observer } from 'mobx-react';
 import React, { Fragment } from 'react';
 import '../style/statusContainer.scss';
 import { UIStore } from '../stores/UIStore';
 
-const StatusContainer: React.FC<{}> = () => {
+interface Props{
+  currentPathid:number;
+}
+
+const StatusContainer: React.FC<Props> = observer((props: Props) => {
   
   const inputChange = (event: any) => {
     let name = event.target.name;
     let value = event.target.value;
-      UIStore.setStateInfo(0,name,value);
+      UIStore.setStateInfo(props.currentPathid,name,value);
   }
 
-  const pathInfo = UIStore.pathList[0];
+  const pathInfo = UIStore.pathList[props.currentPathid];
 
   return (
     <Fragment>
@@ -19,28 +23,28 @@ const StatusContainer: React.FC<{}> = () => {
           <h4>状态栏</h4>
           <label className = "statusinput">
             <span>PositionX:</span>
-            <input type="number"  name="X" defaultValue={pathInfo.nodes[0].posX} onChange={inputChange}/>
+            <input type="number"  name="X" value={pathInfo.nodes[0].posX} onChange={inputChange}/>
           </label>
           <label className = "statusinput">
             <span>PositionY:</span>
-            <input type="number" name="Y" defaultValue = {pathInfo.nodes[0].posY} onChange = {inputChange}/>
+            <input type="number" name="Y" value = {pathInfo.nodes[0].posY} onChange = {inputChange}/>
           </label>
           <label className = "statusinput">
             <span>fill:</span>
-            <input type="color" name="fill" defaultValue = {pathInfo.fill} onChange = {inputChange}/>
+            <input type="color" name="fill" value = {pathInfo.fill} onChange = {inputChange}/>
           </label>
           <label className = "statusinput">
             <span>stroke Width:</span>
-            <input type="number" name="strokeWidth" min = "0" max = "40" defaultValue = {pathInfo.strokeWidth} onChange = {inputChange}/>
+            <input type="number" name="strokeWidth" min = "0" max = "40" value = {pathInfo.strokeWidth} onChange = {inputChange}/>
           </label>
           <label className = "statusinput">
             <span>stroke:</span>
-            <input type="color" name="stroke" defaultValue = {pathInfo.stroke} onChange = {inputChange}/>
+            <input type="color" name="stroke" value = {pathInfo.stroke} onChange = {inputChange}/>
           </label>
       </div>
     </Fragment>
   )
 
-}
+})
 
 export default StatusContainer;
