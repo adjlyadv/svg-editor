@@ -28,9 +28,17 @@ const EditorContainer: React.FC<Props> = (props) =>  {
 
   const edtiorRef = useRef<SVGSVGElement>(null);
   var clickTimeChange:any;
+
   const [editing, setEditing] = useState<boolean>(true)
   const [pathId, setPathId] = useState<number>(-1)
   const [editorInfo, setEditorInfo] = useState(UIStore.editorInfo);
+
+  const [startNode,setStartNode] = useState(
+      {
+        posX : -1,
+        posY :-1
+      }
+  )
 
   const pathList = UIStore.pathList;
   let pathid = UIStore.mouseState.pathid;
@@ -115,22 +123,30 @@ const EditorContainer: React.FC<Props> = (props) =>  {
   }
 //创建新的路径 点击
   const pathClick:any = (e:any) => {
+
     e.stopPropagation();
     clearTimeout(clickTimeChange);
     clickTimeChange = setTimeout(
         () => {
-          switch(props.currentTool) {
+          switch (props.currentTool) {
             case "pen": {
-              if(!editing){
+              if (!editing) {
                 setEditing(true);
-              }
-              else{
+              } else {
                 let _pathId = pathId;
-                if(props.currentTool === "pen" && pathId === -1){
-                  _pathId = UIStore.addPath()
-                  setPathId(_pathId);
+                if (_pathId === -1) {
+                  if (startNode.posX > -1 && startNode.posY > -1) {
+                    _pathId = UIStore.addPath()
+                    setPathId(_pathId);
+                    UIStore.addNodes(_pathId, startNode.posX, startNode.posY);
+                    setStartNode({posX : -1, posY: -1});
+                  } else {
+                    setStartNode({posX : e.pageX - editorInfo.left, posY: e.pageY - editorInfo.top});
+                    return;
+                  }
+
                 }
-                UIStore.addNodes(_pathId, e.pageX-editorInfo.left,e.pageY-editorInfo.top)
+                UIStore.addNodes(_pathId, e.pageX - editorInfo.left, e.pageY - editorInfo.top)
               }
             }
           }
@@ -138,8 +154,8 @@ const EditorContainer: React.FC<Props> = (props) =>  {
         },
         300
     );
-
   }
+
   
   const pathDoubleClick:any = () => {
     clearTimeout(clickTimeChange);
