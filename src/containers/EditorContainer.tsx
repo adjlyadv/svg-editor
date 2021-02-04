@@ -40,7 +40,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
   const edtiorRef = useRef<SVGSVGElement>(null);
   var clickTimeChange:any;
 
-  const [editing, setEditing] = useState<boolean>(true)
+  const editing = useRef<boolean>(true)
   const [pathId, setPathId] = useState<number>(-1)
   const [editorInfo, setEditorInfo] = useState(UIStore.editorInfo);
 
@@ -141,8 +141,8 @@ const EditorContainer: React.FC<Props> = (props) =>  {
         () => {
           switch (props.currentTool) {
             case "pen": {
-              if (!editing) {
-                setEditing(true);
+              if (!editing.current) {
+                editing.current=true;
               } else {
                 let _pathId = pathId;
                 if (_pathId === -1) {
@@ -170,7 +170,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
   
   const pathDoubleClick:any = () => {
     clearTimeout(clickTimeChange);
-    setEditing(false);
+    editing.current=false;
     setPathId(-1);
   }
 
