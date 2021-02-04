@@ -12,10 +12,12 @@ interface Props{
     stroke: string,
     fill:string
   }
+  setPathid:(arg0: number)=>void;
+  currentTool:String;
 }
 
 const path: React.FC<Props> = observer((props: Props) => {
-
+    
     const getD = (nodes: string | any[]) => {
 
       let d = "";
@@ -34,7 +36,7 @@ const path: React.FC<Props> = observer((props: Props) => {
       
       return d
     }
-
+    
     const getEditingPath = () => {
       let paths = [];
       let mockNode = null;
@@ -67,11 +69,18 @@ const path: React.FC<Props> = observer((props: Props) => {
 
       return paths
     }
-
+    
     const handleDoubleClick = (event: any) => {
       event.stopPropagation();
-      setEditing(true);
+      if(props.currentTool === 'mouse')
+        setEditing(true);
     }
+
+    const handleClick = (event: any) => {
+      event.stopPropagation();
+      props.setPathid(props.path.id);
+    }
+
 
     const [editing, setEditing] = useState<boolean>(false);
     const { id, nodes } = props.path;
@@ -79,7 +88,7 @@ const path: React.FC<Props> = observer((props: Props) => {
     if (!editing) {
       return (
         <Fragment>
-          <path onDoubleClick={handleDoubleClick} d={getD(nodes)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke}fill={props.path.fill}/>
+          <path onDoubleClick={handleDoubleClick} onClick={handleClick} d={getD(nodes)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke}fill={props.path.fill}/>
         </Fragment>
       );
     }
@@ -91,7 +100,7 @@ const path: React.FC<Props> = observer((props: Props) => {
         {
           paths.map(item => 
             <Fragment>
-              <path d={item.attrD} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke}fill={props.path.fill}/>
+              <path d={item.attrD} onClick={handleClick} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke}fill={props.path.fill}/>
               {nodes.map((node, index) => 
                 <Node node={node} id={index} pathId={id} />
               )}

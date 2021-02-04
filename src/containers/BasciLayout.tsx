@@ -9,12 +9,13 @@ import '../style/BasicContainer.scss'
 const BasicLayout = () => {
 
   const [currentTool, setCurrenttool] = useState("mouse");
+  const [currentPathid, setCurrentPathid] = useState(0);
 
   return(
     <div className="basic-container">
       <ToolbarContainer currentTool={currentTool} set={setCurrenttool}/>
-      <EditorContainer currentTool={currentTool}/>
-      <StatusContainer />
+      <EditorContainer currentTool={currentTool} currentPathid={currentPathid} set={setCurrentPathid} />
+      <StatusContainer currentPathid={currentPathid}/>
     </div>
   )
 }

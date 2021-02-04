@@ -6,10 +6,12 @@ import * as _ from 'lodash';
 import '../style/EditorContainer.scss';
 
 interface Props{
-  currentTool:string
+  currentTool:string;
+  currentPathid:number;
+  set:(arg0: number)=>void;
 }
 
-const EditorContainer: React.FC<Props> = ({currentTool}) =>  {
+const EditorContainer: React.FC<Props> = (props) =>  {
 
   useEffect(() => {
     if (!edtiorRef) {
@@ -85,20 +87,20 @@ const EditorContainer: React.FC<Props> = ({currentTool}) =>  {
     event.stopPropagation();
     UIStore.setMouseState(false,false,pathid,nodeid);
   }
-
+//创建新的路径 点击
   const pathClick:any = (e:any) => {
     e.stopPropagation();
     clearTimeout(clickTimeChange);
     clickTimeChange = setTimeout(
         () => {
-          switch(currentTool) {
+          switch(props.currentTool) {
             case "pen": {
               if(!editing){
                 setEditing(true);
               }
               else{
                 let _pathId = pathId;
-                if(currentTool === "pen" && pathId === -1){
+                if(props.currentTool === "pen" && pathId === -1){
                   _pathId = UIStore.addPath()
                   setPathId(_pathId);
                 }
@@ -106,6 +108,7 @@ const EditorContainer: React.FC<Props> = ({currentTool}) =>  {
               }
             }
           }
+          
         },
         300
     );
@@ -118,13 +121,15 @@ const EditorContainer: React.FC<Props> = ({currentTool}) =>  {
     setPathId(-1);
   }
 
+
+
   return(
     <div className="editor-container">
       <svg ref={edtiorRef} className="editor-svg" width={editorInfo.width} height={editorInfo.height}
            onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}
            onDoubleClick={pathDoubleClick} onClick={pathClick}>
         {pathList.map(path => (
-          <Path key={path.id} path={path}/>
+          <Path key={path.id} path={path} setPathid={props.set} currentTool={props.currentTool}/>
         ))}
       </svg>
     </div>

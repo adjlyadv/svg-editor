@@ -72,7 +72,7 @@ class UIstore {
           nodes: [],
           strokeWidth: 5,
           stroke: "#000000",
-          fill: "#ffffff"
+          fill: "none"
         }
     )
     return this.pathList.length;
