@@ -13,6 +13,7 @@ interface Props{
     fill:string
   }
   setPathid:(arg0: number)=>void;
+  currentTool:String;
 }
 
 const path: React.FC<Props> = observer((props: Props) => {
@@ -71,7 +72,8 @@ const path: React.FC<Props> = observer((props: Props) => {
     
     const handleDoubleClick = (event: any) => {
       event.stopPropagation();
-      setEditing(true);
+      if(props.currentTool === 'mouse')
+        setEditing(true);
     }
 
     const handleClick = (event: any) => {

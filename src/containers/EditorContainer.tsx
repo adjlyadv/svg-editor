@@ -87,7 +87,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     event.stopPropagation();
     UIStore.setMouseState(false,false,pathid,nodeid);
   }
-
+//创建新的路径 点击
   const pathClick:any = (e:any) => {
     e.stopPropagation();
     clearTimeout(clickTimeChange);
@@ -129,7 +129,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
            onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}
            onDoubleClick={pathDoubleClick} onClick={pathClick}>
         {pathList.map(path => (
-          <Path key={path.id} path={path} setPathid={props.set}/>
+          <Path key={path.id} path={path} setPathid={props.set} currentTool={props.currentTool}/>
         ))}
       </svg>
     </div>
