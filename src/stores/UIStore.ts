@@ -4,7 +4,9 @@ export interface Node {
   posX: number,
   posY: number,
   ctrPosX: number,
-  ctrPosY: number
+  ctrPosY: number,
+  ctr2PosX?: number,
+  ctr2PoxY?: number,
 }
 
 export interface Path {
@@ -81,15 +83,33 @@ class UIstore {
     this.pathList[pathId].nodes[nodeId] = node;
   }
 
-  addNodes =(pathId: number , posX: number, posY: number) => {
-    this.pathList[pathId-1].nodes.push(
-        {
-          posX: posX,
-          posY: posY,
-          ctrPosX:posX,
-          ctrPosY:posY,
-        }
-    )
+  addNodes =(pathId: number , node: Node, index: number) => {
+
+    // this.pathList[pathId].nodes.splice(index || this.pathList[pathId].nodes.length - 1, 0, 
+    //   {
+    //     posX: posX,
+    //     posY: posY,
+    //     ctrPosX: ctrPosX || posX,
+    //     ctrPosY: ctrPosY || posY,
+    //   }
+    // );
+    const nodesLength = this.pathList[pathId].nodes.length;
+
+    this.pathList[pathId].nodes = [
+      ...this.pathList[pathId].nodes.slice(0, index || nodesLength - 1),
+      node,
+      ...this.pathList[pathId].nodes.slice(index || nodesLength - 1)
+    ]
+
+
+    // this.pathList[pathId].nodes.push(
+    //     {
+    //       posX: posX,
+    //       posY: posY,
+    //       ctrPosX: ctrPosX || posX,
+    //       ctrPosY: ctrPosY || posY,
+    //     }
+    // )
 
   }
   setMouseState = (type:boolean,dragging:boolean,pathid:number,nodeid:number) => {

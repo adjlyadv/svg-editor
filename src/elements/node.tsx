@@ -5,12 +5,19 @@ import { Node as typeNode, UIStore } from '../stores/UIStore';
 interface Props {
   node: typeNode,
   id: number,
-  pathId: number
+  pathId: number,
+  onClick?: any
 }
 
 const Node = observer((props: Props) => {
 
-  const node = UIStore.pathList[props.pathId].nodes[props.id]; 
+  if (props.id === -1) {
+    return (
+      <circle onClick={props.onClick} className="point-control-add" cx={props.node.posX} cy={props.node.posY} />
+    )
+  }
+
+  const node = UIStore.pathList[props.pathId].nodes[props.id];
 
   const handleMouseDown = (elec:boolean, event: any) => {
     if(elec){
@@ -24,9 +31,9 @@ const Node = observer((props: Props) => {
   
   return(
     <Fragment>
-      <circle className="point-control" onMouseDown={(e) => handleMouseDown(true, e)} cx={node.posX} cy={node.posY} stroke="#55f" r="4" />
+      <circle className="point-control" onMouseDown={(e) => handleMouseDown(true, e)} cx={node.posX} cy={node.posY} />
         <line x1={node.posX} y1={node.posY} x2={node.ctrPosX} y2={node.ctrPosY} stroke="#555" strokeWidth="1" />
-      <circle className="point-control" onMouseDown={(e) => handleMouseDown(false, e)} cx={node.ctrPosX} cy={node.ctrPosY} stroke="#55f" r="4" />
+      <circle className="point-control" onMouseDown={(e) => handleMouseDown(false, e)} cx={node.ctrPosX} cy={node.ctrPosY} />
     </Fragment>
   )
 

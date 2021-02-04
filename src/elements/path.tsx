@@ -1,7 +1,9 @@
 import React, { Fragment, useState } from 'react';
-import { Node as typeNode } from '../stores/UIStore'
+import { Node as typeNode } from '../stores/UIStore';
+import { getRelativePositon } from '../utils/calculate';
 import Node from './node';
-// import Bezier from 'bezier-js';
+import _ from 'lodash';
+import Bezier from 'bezier-js';
 import { observer } from 'mobx-react';
 
 interface Props{
@@ -24,7 +26,7 @@ const path: React.FC<Props> = observer((props: Props) => {
       for (let i = 0; i < nodes.length; i++) {
         if (i === 0) {
           d += `M ${nodes[i].posX} ${nodes[i].posY} C ${nodes[i].ctrPosX} ${nodes[i].ctrPosY} `
-        } else if (i !== nodes.length - 1) {
+        } else if (i !== nodes.length - 1 && nodes[i].posX !== nodes[i - 1].posX) {
           const mockCtrX = nodes[i].posX * 2 - nodes[i].ctrPosX;
           const mockCtrY = nodes[i].posY * 2 - nodes[i].ctrPosY;
           d += `${nodes[i].ctrPosX} ${nodes[i].ctrPosY} ${nodes[i].posX} ${nodes[i].posY} C ${mockCtrX} ${mockCtrY} `
@@ -32,7 +34,6 @@ const path: React.FC<Props> = observer((props: Props) => {
           d += `${nodes[i].ctrPosX} ${nodes[i].ctrPosY} ${nodes[i].posX} ${nodes[i].posY}`
         }
       }
-      console.log(d)
       
       return d
     }
@@ -55,7 +56,6 @@ const path: React.FC<Props> = observer((props: Props) => {
             ctrPosY: mockCtrY
           }
         }
-
 
         const attrD = getD([mockNode ? mockNode : nodes[i], nodes[i + 1]]);
         paths.push({
@@ -81,14 +81,77 @@ const path: React.FC<Props> = observer((props: Props) => {
       props.setPathid(props.path.id);
     }
 
+    const handleOnMouseMove = _.throttle((event: any, item: any) => {
+      event.stopPropagation();
+      const { x, y } = getRelativePositon(event);
+
+      const nums = item.nodes.reduce((pre: Array<number>, cur: typeNode, index: number) => {
+        if (index === item.nodes.length - 1) {
+          pre.push(cur.ctrPosX, cur.ctrPosY, cur.posX, cur.posY);
+        } else {
+          pre.push(cur.posX, cur.posY, cur.ctrPosX, cur.ctrPosY);
+        }
+
+        return pre
+      }, []).flat(1);
+
+      const bezier = new Bezier(nums);
+      setBezier(bezier);
+      const nodeInfo = bezier.project({x, y});
+
+      setNewNode({
+        posX: nodeInfo.x,
+        posY: nodeInfo.y,
+        ctrPosX: nodeInfo.x,
+        ctrPosY: nodeInfo.y,
+        t: nodeInfo.t
+      })
+
+    }, 50);
+
+    const handleAddNewNode = () => {
+      const points = bezier?.split(newNode.t).left.points;
+      console.log(points)
+      console.log(newNode)
+
+      // let temp = bezier?.derivative(newNode.t);
+      // if (!temp) {
+      //   return
+      // }
+      // let temp1 = Math.sqrt(temp?.x * temp?.x + temp?.y * temp?.y);
+
+      // console.log(newNode);
+      // console.log(newNode.posX + temp?.x / temp1, newNode.posY + temp?.y / temp1)
+
+      // if (!points) {
+      //   return
+      // }
+
+      // const index = nodes.findIndex((node) => {
+      //   return node.posX === bezier?.points[0].x && node.posY === bezier?.points[0].y
+      // });
+
+      // let node = {
+      //   posX: points[0].x,
+      //   posY: points[0].y,
+      //   ctrPosX: points[0].x *2 - points[1].x,
+      //   ctrPosY: points[0].y *2 - points[1].y
+      // }
+
+      // UIStore.setNodes(id, index, node)
+
+      // UIStore.addNodes(id, points[3].x, points[3].y, points[2].x, points[2].y, index + 1);
+    }
 
     const [editing, setEditing] = useState<boolean>(false);
+    const [newNode, setNewNode] = useState<any>();
+    const [bezier, setBezier] = useState<Bezier>();
     const { id, nodes } = props.path;
 
     if (!editing) {
       return (
         <Fragment>
-          <path onDoubleClick={handleDoubleClick} onClick={handleClick} d={getD(nodes)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke}fill={props.path.fill}/>
+          <path onDoubleClick={handleDoubleClick} onClick={handleClick} d={getD(nodes)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke} fill={props.path.fill}/>
         </Fragment>
       );
     }
@@ -100,13 +163,14 @@ const path: React.FC<Props> = observer((props: Props) => {
         {
           paths.map(item => 
             <Fragment>
-              <path d={item.attrD} onClick={handleClick} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke}fill={props.path.fill}/>
+              <path key={item.attrD} onClick={handleClick} d={item.attrD} onMouseOver={e => handleOnMouseMove(e, item)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke}fill={props.path.fill}/>
               {nodes.map((node, index) => 
                 <Node node={node} id={index} pathId={id} />
               )}
             </Fragment>
           )
         }
+        {newNode && <Node node={newNode} id={-1} pathId={-1} onClick={handleAddNewNode} />}
       </Fragment>
     )
 
