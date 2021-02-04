@@ -1,6 +1,7 @@
 import React, { useEffect, useRef , useState} from 'react';
 import { Node as typeNode, UIStore } from '../stores/UIStore';
 import Path from '../elements/path';
+import { nodeTypes } from '../elements/constants';
 import { getRelativePositon } from '../utils/calculate';
 import * as _ from 'lodash';
 import '../style/EditorContainer.scss';
@@ -52,7 +53,9 @@ const EditorContainer: React.FC<Props> = (props) =>  {
       posX: node1.posX,
       posY: node1.posY,
       ctrPosX: node1.ctrPosX,
-      ctrPosY: node1.ctrPosY
+      ctrPosY: node1.ctrPosY,
+      ctr2PosX: node1.ctr2PosX,
+      ctr2PosY: node1.ctr2PosY
     });
   }
 
@@ -62,30 +65,53 @@ const EditorContainer: React.FC<Props> = (props) =>  {
       return
     }
     const { x, y } = getRelativePositon(event);
-    //锚点
-    if(UIStore.mouseState.type){
-    setNode({
-      posX: x,
-      posY: y,
-      ctrPosX: node.ctrPosX,
-      ctrPosY: node.ctrPosY
-    });
-  }
-  //控制点
-  else{
-    setNode({
-      posX: node.posX,
-      posY: node.posY,
-      ctrPosX: x,
-      ctrPosY: y
-    })
-  }
 
+    switch (UIStore.mouseState.type) {
+      case (nodeTypes.AnchorPoint): {
+        setNode({
+          posX: x,
+          posY: y,
+          ctrPosX: node.ctrPosX,
+          ctrPosY: node.ctrPosY,
+          ctr2PosX: node.ctr2PosX,
+          ctr2PosY: node.ctr2PosY
+        });
+
+        break;
+      }
+
+      case (nodeTypes.Ctr1Point): {
+        setNode({
+          posX: node.posX,
+          posY: node.posY,
+          ctrPosX: x,
+          ctrPosY: y,
+          ctr2PosX: node.ctr2PosX,
+          ctr2PosY: node.ctr2PosY
+        });
+
+        break;
+      }
+
+      case (nodeTypes.Ctr2Point): {
+        setNode({
+          posX: node.posX,
+          posY: node.posY,
+          ctrPosX: node.ctrPosX,
+          ctrPosY: node.ctrPosY,
+          ctr2PosX: x,
+          ctr2PosY: y
+        });
+
+        break;
+      }
+      
+    }
   }, 5, { 'trailing': true })
   
   const handleMouseUp = (event: any) => {
     event.stopPropagation();
-    UIStore.setMouseState(false,false,pathid,nodeid);
+    UIStore.setMouseState(nodeTypes.AnchorPoint, false, pathid, nodeid);
   }
 //创建新的路径 点击
   const pathClick:any = (e:any) => {
@@ -120,8 +146,6 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     setEditing(false);
     setPathId(-1);
   }
-
-
 
   return(
     <div className="editor-container">

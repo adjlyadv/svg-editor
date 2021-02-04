@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx';
+import { nodeTypes } from '../elements/constants';
 
 export interface Node {
   posX: number,
@@ -6,7 +7,7 @@ export interface Node {
   ctrPosX: number,
   ctrPosY: number,
   ctr2PosX?: number,
-  ctr2PoxY?: number,
+  ctr2PosY?: number,
 }
 
 export interface Path {
@@ -26,7 +27,7 @@ class UIstore {
     top: 0
   }
   mouseState ={
-    type: false,
+    type: nodeTypes.AnchorPoint,
     drugging: false,
     pathid: 0,
     nodeid: 0
@@ -51,6 +52,8 @@ class UIstore {
             posY: 140.5,
             ctrPosX: 288.5,
             ctrPosY: 95.5,
+            ctr2PosX: 204.5,
+            ctr2PosY: 185.5
           },
           {
             posX: 210,
@@ -64,7 +67,6 @@ class UIstore {
         fill: "none"
       }
     )
-    // M125.5,171.5C194.5,85.5 288.5,95.5 246.5,140.5C204.5,185.5 309.5,309.5 210,261
   }
 
   addPath = () => {
@@ -74,48 +76,38 @@ class UIstore {
           nodes: [],
           strokeWidth: 5,
           stroke: "#000000",
-          fill: "none"
+          fill: "#ffffff"
         }
     )
     return this.pathList.length;
   }
+
   setNodes = (pathId: number, nodeId: number, node: Node) => {
     this.pathList[pathId].nodes[nodeId] = node;
   }
 
-  addNodes =(pathId: number , node: Node, index: number) => {
+  addNodes =(pathId: number , posX: number, posY: number, ctrPosX?: number, ctrPosY?: number, ctr2PosX?: number, ctr2PoxY?: number, index?: number) => {
 
-    // this.pathList[pathId].nodes.splice(index || this.pathList[pathId].nodes.length - 1, 0, 
-    //   {
-    //     posX: posX,
-    //     posY: posY,
-    //     ctrPosX: ctrPosX || posX,
-    //     ctrPosY: ctrPosY || posY,
-    //   }
-    // );
     const nodesLength = this.pathList[pathId].nodes.length;
-
     this.pathList[pathId].nodes = [
       ...this.pathList[pathId].nodes.slice(0, index || nodesLength - 1),
-      node,
+      {
+        posX: posX,
+        posY: posY,
+        ctrPosX: ctrPosX || posX,
+        ctrPosY: ctrPosY || posY,
+        ctr2PosX: ctr2PosX,
+        ctr2PosY: ctr2PoxY
+      },
       ...this.pathList[pathId].nodes.slice(index || nodesLength - 1)
     ]
 
-
-    // this.pathList[pathId].nodes.push(
-    //     {
-    //       posX: posX,
-    //       posY: posY,
-    //       ctrPosX: ctrPosX || posX,
-    //       ctrPosY: ctrPosY || posY,
-    //     }
-    // )
-
   }
-  setMouseState = (type:boolean,dragging:boolean,pathid:number,nodeid:number) => {
+
+  setMouseState = (type: number, dragging:boolean, pathid:number, nodeid:number) => {
     this.mouseState.pathid = pathid;
     this.mouseState.nodeid = nodeid;
-    this.mouseState.type = type;//为真是锚点，为假是控制点
+    this.mouseState.type = type;
     this.mouseState.drugging = dragging;
   }
 

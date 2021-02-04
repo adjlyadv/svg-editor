@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react';
-import { Node as typeNode } from '../stores/UIStore';
+import { Node as typeNode, UIStore } from '../stores/UIStore';
 import { getRelativePositon } from '../utils/calculate';
 import Node from './node';
 import _ from 'lodash';
@@ -26,10 +26,8 @@ const path: React.FC<Props> = observer((props: Props) => {
       for (let i = 0; i < nodes.length; i++) {
         if (i === 0) {
           d += `M ${nodes[i].posX} ${nodes[i].posY} C ${nodes[i].ctrPosX} ${nodes[i].ctrPosY} `
-        } else if (i !== nodes.length - 1 && nodes[i].posX !== nodes[i - 1].posX) {
-          const mockCtrX = nodes[i].posX * 2 - nodes[i].ctrPosX;
-          const mockCtrY = nodes[i].posY * 2 - nodes[i].ctrPosY;
-          d += `${nodes[i].ctrPosX} ${nodes[i].ctrPosY} ${nodes[i].posX} ${nodes[i].posY} C ${mockCtrX} ${mockCtrY} `
+        } else if (i + 1 <= nodes.length - 1) {
+          d += `${nodes[i].ctrPosX} ${nodes[i].ctrPosY} ${nodes[i].posX} ${nodes[i].posY} C ${nodes[i].ctr2PosX} ${nodes[i].ctr2PosY} `
         } else {
           d += `${nodes[i].ctrPosX} ${nodes[i].ctrPosY} ${nodes[i].posX} ${nodes[i].posY}`
         }
@@ -46,14 +44,12 @@ const path: React.FC<Props> = observer((props: Props) => {
 
         if (i !== 0 && i + 1 !== nodes.length) {
           const node = nodes[i];
-          const mockCtrX = nodes[i].posX * 2 - nodes[i].ctrPosX;
-          const mockCtrY = nodes[i].posY * 2 - nodes[i].ctrPosY;
 
           mockNode = {
             posX: node.posX,
             posY: node.posY,
-            ctrPosX: mockCtrX,
-            ctrPosY: mockCtrY
+            ctrPosX: node.ctr2PosX,
+            ctrPosY: node.ctr2PosY
           }
         }
 
@@ -109,38 +105,56 @@ const path: React.FC<Props> = observer((props: Props) => {
 
     }, 50);
 
-    const handleAddNewNode = () => {
-      const points = bezier?.split(newNode.t).left.points;
-      console.log(points)
-      console.log(newNode)
+    const handleAddNewNodeClick = () => {
+      const newPath = bezier?.split(newNode.t); // 这里贝塞尔曲线被分成了两个部分，需要分别更新左右两端
+      let points = newPath?.left.points; // 0 1 2 3 分别是第一个点的位置、控制点，第二个点的控制点、位置
 
-      // let temp = bezier?.derivative(newNode.t);
-      // if (!temp) {
-      //   return
-      // }
-      // let temp1 = Math.sqrt(temp?.x * temp?.x + temp?.y * temp?.y);
+      if (!newPath || !points) {
+        return
+      }
 
-      // console.log(newNode);
-      // console.log(newNode.posX + temp?.x / temp1, newNode.posY + temp?.y / temp1)
+      let index = nodes.findIndex((node) => {
+        return node.posX === bezier?.points[0].x && node.posY === bezier?.points[0].y
+      });
 
-      // if (!points) {
-      //   return
-      // }
+      let node = {
+        posX: points[0].x,
+        posY: points[0].y,
+        ctrPosX: index ? UIStore.pathList[id].nodes[index].ctrPosX : points[1].x,
+        ctrPosY: index ? UIStore.pathList[id].nodes[index].ctrPosY : points[1].y,
+        ctr2PosX: index ? points[1].x : undefined,
+        ctr2PosY: index ? points[1].y : undefined
+      } // 这里要判定一下index为0  即起始节点的情况，做特殊处理
 
-      // const index = nodes.findIndex((node) => {
-      //   return node.posX === bezier?.points[0].x && node.posY === bezier?.points[0].y
-      // });
+      let addingNode = {
+        posX: points[3].x,
+        posY: points[3].y,
+        ctrPosX: points[2].x,
+        ctrPosY: points[2].y,
+        ctr2PosX: 0,
+        ctr2PosY: 0
+      } // 这是新的节点信息
 
-      // let node = {
-      //   posX: points[0].x,
-      //   posY: points[0].y,
-      //   ctrPosX: points[0].x *2 - points[1].x,
-      //   ctrPosY: points[0].y *2 - points[1].y
-      // }
+      UIStore.setNodes(id, index, node); // 更新左端点
 
-      // UIStore.setNodes(id, index, node)
+      points = newPath?.right.points;
 
-      // UIStore.addNodes(id, points[3].x, points[3].y, points[2].x, points[2].y, index + 1);
+      node = {
+        posX: points[3].x,
+        posY: points[3].y,
+        ctrPosX: points[2].x,
+        ctrPosY: points[2].y,
+        ctr2PosX: UIStore.pathList[id].nodes[index + 1].ctr2PosX || undefined,
+        ctr2PosY: UIStore.pathList[id].nodes[index + 1].ctr2PosY || undefined
+      }
+
+      addingNode.ctr2PosX = points[1].x;
+      addingNode.ctr2PosY = points[1].y; // 新的节点信息需要左右两端的
+      
+      UIStore.setNodes(id, index + 1, node); // 更新右端点
+
+      UIStore.addNodes(id, addingNode.posX, addingNode.posY, addingNode.ctrPosX, addingNode.ctrPosY, addingNode.ctr2PosX, addingNode.ctr2PosY, index + 1);
+      setNewNode(null);
     }
 
     const [editing, setEditing] = useState<boolean>(false);
@@ -164,13 +178,13 @@ const path: React.FC<Props> = observer((props: Props) => {
           paths.map(item => 
             <Fragment>
               <path key={item.attrD} onClick={handleClick} d={item.attrD} onMouseOver={e => handleOnMouseMove(e, item)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke}fill={props.path.fill}/>
-              {nodes.map((node, index) => 
-                <Node node={node} id={index} pathId={id} />
-              )}
             </Fragment>
           )
         }
-        {newNode && <Node node={newNode} id={-1} pathId={-1} onClick={handleAddNewNode} />}
+        {nodes.map((node, index) => 
+          <Node node={node} id={index} pathId={id} />
+        )}
+        {newNode && <Node node={newNode} id={-1} pathId={-1} onClick={handleAddNewNodeClick} onMouseLeave={() => setNewNode(null)} />}
       </Fragment>
     )
 
