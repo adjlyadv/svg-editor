@@ -24,13 +24,31 @@ const EditorContainer: React.FC<Props> = (props) =>  {
       UIStore.editorInfo.left = editorInfo.left;
       setEditorInfo(editorInfo);
     }
+
   }, [])
+
+  //cucurrentTool改变
+  useEffect(() => {
+    if (props.currentTool !== "pen") {
+      setStartNode({posX: -1, posY: -1});
+      setPathId(-1);
+
+    }
+  },[props.currentTool])
 
   const edtiorRef = useRef<SVGSVGElement>(null);
   var clickTimeChange:any;
-  const [editing, setEditing] = useState<boolean>(true)
+
+  const editing = useRef<boolean>(true)
   const [pathId, setPathId] = useState<number>(-1)
   const [editorInfo, setEditorInfo] = useState(UIStore.editorInfo);
+
+  const [startNode,setStartNode] = useState(
+      {
+        posX : -1,
+        posY :-1
+      }
+  )
 
   const pathList = UIStore.pathList;
   let pathid = UIStore.mouseState.pathid;
@@ -69,40 +87,28 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     switch (UIStore.mouseState.type) {
       case (nodeTypes.AnchorPoint): {
         setNode({
+          ...node,
           posX: x,
           posY: y,
-          ctrPosX: node.ctrPosX,
-          ctrPosY: node.ctrPosY,
-          ctr2PosX: node.ctr2PosX,
-          ctr2PosY: node.ctr2PosY
         });
-
         break;
       }
 
       case (nodeTypes.Ctr1Point): {
         setNode({
-          posX: node.posX,
-          posY: node.posY,
+          ...node,
           ctrPosX: x,
           ctrPosY: y,
-          ctr2PosX: node.ctr2PosX,
-          ctr2PosY: node.ctr2PosY
         });
-
         break;
       }
 
       case (nodeTypes.Ctr2Point): {
         setNode({
-          posX: node.posX,
-          posY: node.posY,
-          ctrPosX: node.ctrPosX,
-          ctrPosY: node.ctrPosY,
+          ...node,
           ctr2PosX: x,
           ctr2PosY: y
         });
-
         break;
       }
       
@@ -115,22 +121,32 @@ const EditorContainer: React.FC<Props> = (props) =>  {
   }
 //创建新的路径 点击
   const pathClick:any = (e:any) => {
+
     e.stopPropagation();
     clearTimeout(clickTimeChange);
     clickTimeChange = setTimeout(
         () => {
-          switch(props.currentTool) {
+          switch (props.currentTool) {
             case "pen": {
-              if(!editing){
-                setEditing(true);
-              }
-              else{
+              if (!editing.current) {
+                editing.current=true;
+              } else {
                 let _pathId = pathId;
-                if(props.currentTool === "pen" && pathId === -1){
-                  _pathId = UIStore.addPath()
-                  setPathId(_pathId);
+                const { x, y } = getRelativePositon(e)
+
+                if (_pathId === -1) {
+                  if (startNode.posX > -1 && startNode.posY > -1) {
+                    _pathId = UIStore.addPath()
+                    setPathId(_pathId);
+                    UIStore.addNodes(_pathId, startNode.posX, startNode.posY);
+                    setStartNode({posX : -1, posY: -1});
+                  } else {
+                    setStartNode({posX : x, posY: y});
+                    return;
+                  }
+
                 }
-                UIStore.addNodes(_pathId, e.pageX-editorInfo.left,e.pageY-editorInfo.top)
+                UIStore.addNodes(_pathId, x, y)
               }
             }
           }
@@ -138,12 +154,12 @@ const EditorContainer: React.FC<Props> = (props) =>  {
         },
         300
     );
-
   }
+
   
   const pathDoubleClick:any = () => {
     clearTimeout(clickTimeChange);
-    setEditing(false);
+    editing.current=false;
     setPathId(-1);
   }
 

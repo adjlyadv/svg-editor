@@ -32,6 +32,8 @@ const path: React.FC<Props> = observer((props: Props) => {
           d += `${nodes[i].ctrPosX} ${nodes[i].ctrPosY} ${nodes[i].posX} ${nodes[i].posY}`
         }
       }
+
+      console.log(d)
       
       return d
     }
