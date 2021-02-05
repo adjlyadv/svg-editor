@@ -46,19 +46,22 @@ const EditorContainer: React.FC<Props> = (props) =>  {
   const [lastNode, setLastnode] = useState<typeNode>(pathList[pathid].nodes[nodeid]);
   const [startNode, setStartNode] = useState<Boolean>(false);
 
+  let mouseUpTimeChange:any;
+
+
   const handleMouseDown = (event: any) => {
     event.stopPropagation();
     const { x, y } = getRelativePositon(event);
     switch(props.currentTool){
       case 'mouse':{
-            pathid = UIStore.mouseState.pathid;
-            nodeid = UIStore.mouseState.nodeid
-            let node1 = UIStore.pathList[pathid].nodes[nodeid];
-            setNode({
-              ...node1
-            });
-          }
-          break;
+        pathid = UIStore.mouseState.pathid;
+        nodeid = UIStore.mouseState.nodeid
+        let node1 = UIStore.pathList[pathid].nodes[nodeid];
+        setNode({
+          ...node1
+        });
+      }
+      break;
       case 'pen':{//钢笔工具 按下的时候确定一个锚点的posx posy
         if(!editing.current){
           editing.current=true;
@@ -72,18 +75,16 @@ const EditorContainer: React.FC<Props> = (props) =>  {
             ctr2PosY:y
           })
         }
-        setNewnode(
-          {
-            posX:x,
-            posY:y,
-            ctrPosX:x,
-            ctrPosY:y,
-            ctr2PosX:x,
-            ctr2PosY:y
-          }
-        )
+        setNewnode({
+          posX:x,
+          posY:y,
+          ctrPosX:x,
+          ctrPosY:y,
+          ctr2PosX:x,
+          ctr2PosY:y
+        })
       }
-      break;
+        break;
     }
   }
     
@@ -144,41 +145,44 @@ const EditorContainer: React.FC<Props> = (props) =>  {
 
   const handleMouseUp = (event: any) => {
     event.stopPropagation();
-    switch(props.currentTool){
-      case 'mouse':{
-        UIStore.setMouseState(nodeTypes.AnchorPoint, false, pathid, nodeid);
-      }
-      break;
-      //bug: 添加最后一个锚点的时候会有两个控制点
-      case 'pen':{//松开鼠标确定一个点 加入path里
-        let _pathId = pathId;
-        if(pathId === -1){
-          _pathId = UIStore.addPath()
-          setPathId(_pathId);
-        }
-        UIStore.addNodes2(_pathId,newNode.posX,newNode.posY,newNode.ctrPosX,newNode.ctrPosY);
-        if(startNode){// 处理第一个节点的渲染
-          const mockCtrX = newNode.posX * 2 - newNode.ctrPosX;
-          const mockCtrY = newNode.posY * 2 - newNode.ctrPosY;
-          setLastnode({
-            ...newNode,
-            ctrPosX: mockCtrX,
-            ctrPosY: mockCtrY
-          })
-          setStartNode(false);
-        }else{
-          setLastnode({
-            ...newNode
-          })
-        }
-        
+    clearTimeout(mouseUpTimeChange);
+    mouseUpTimeChange = setTimeout(
+        () => {
+          switch(props.currentTool){
+            case 'mouse':{
+              UIStore.setMouseState(nodeTypes.AnchorPoint, false, pathid, nodeid);
+            }
+            break;
+            case 'pen':{//松开鼠标确定一个点 加入path里
+              let _pathId = pathId;
+              if(pathId === -1){
+                _pathId = UIStore.addPath()
+                setPathId(_pathId);
+              }
+              UIStore.addNodes2(_pathId,newNode.posX,newNode.posY,newNode.ctrPosX,newNode.ctrPosY);
+              if(startNode){// 处理第一个节点的渲染
+                const mockCtrX = newNode.posX * 2 - newNode.ctrPosX;
+                const mockCtrY = newNode.posY * 2 - newNode.ctrPosY;
+                setLastnode({
+                  ...newNode,
+                  ctrPosX: mockCtrX,
+                  ctrPosY: mockCtrY
+                })
+                setStartNode(false);
+              }else{
+                setLastnode({
+                  ...newNode
+                })
+              }
+            }
+            break;
+          } 
 
-      }
-      break;
-    } 
+        },250)
   }
-  //bug: 双击会引发两次down up 会添加连个一样的锚点
+
   const pathDoubleClick:any = () => {
+    clearTimeout(mouseUpTimeChange);
     editing.current=false;
     setPathId(-1);
   }
