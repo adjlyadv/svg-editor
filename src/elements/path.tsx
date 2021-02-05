@@ -14,12 +14,8 @@ interface Props{
     stroke: string,
     fill:string
   }
-<<<<<<< HEAD
   setPathid:(arg0: number)=>void;
   currentTool:String;
-=======
-    currentTool:string
->>>>>>> a358dd5... fix bugs
 }
 
 const path: React.FC<Props> = observer((props: Props) => {
@@ -36,6 +32,8 @@ const path: React.FC<Props> = observer((props: Props) => {
           d += `${nodes[i].ctrPosX} ${nodes[i].ctrPosY} ${nodes[i].posX} ${nodes[i].posY}`
         }
       }
+
+      console.log(d)
       
       return d
     }
@@ -72,7 +70,6 @@ const path: React.FC<Props> = observer((props: Props) => {
     
     const handleDoubleClick = (event: any) => {
       event.stopPropagation();
-<<<<<<< HEAD
       if(props.currentTool === 'mouse')
         setEditing(true);
     }
@@ -160,12 +157,6 @@ const path: React.FC<Props> = observer((props: Props) => {
 
       UIStore.addNodes(id, addingNode.posX, addingNode.posY, addingNode.ctrPosX, addingNode.ctrPosY, addingNode.ctr2PosX, addingNode.ctr2PosY, index + 1);
       setNewNode(null);
-=======
-      if(props.currentTool === "mouse"){
-          setEditing(true);
-      }
-
->>>>>>> a358dd5... fix bugs
     }
 
     const [editing, setEditing] = useState<boolean>(false);

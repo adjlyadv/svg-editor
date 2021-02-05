@@ -64,7 +64,7 @@ class UIstore {
         ],
         strokeWidth: 5,
         stroke: "#000000",
-        fill: "none"
+        fill: "#ffffff"
       }
     )
   }
@@ -72,14 +72,14 @@ class UIstore {
   addPath = () => {
     this.pathList.push(
         {
-          id: this.pathList.length,
+          id: this.pathList.length - 1,
           nodes: [],
           strokeWidth: 5,
           stroke: "#000000",
           fill: "#ffffff"
         }
     )
-    return this.pathList.length;
+    return this.pathList.length - 1;
   }
 
   setNodes = (pathId: number, nodeId: number, node: Node) => {
@@ -89,6 +89,7 @@ class UIstore {
   addNodes =(pathId: number , posX: number, posY: number, ctrPosX?: number, ctrPosY?: number, ctr2PosX?: number, ctr2PoxY?: number, index?: number) => {
 
     const nodesLength = this.pathList[pathId].nodes.length;
+
     this.pathList[pathId].nodes = [
       ...this.pathList[pathId].nodes.slice(0, index || nodesLength - 1),
       {

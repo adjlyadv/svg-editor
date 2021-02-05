@@ -29,13 +29,12 @@ const EditorContainer: React.FC<Props> = (props) =>  {
 
   //cucurrentTool改变
   useEffect(() => {
-    if (currentTool !== "pen") {
+    if (props.currentTool !== "pen") {
       setStartNode({posX: -1, posY: -1});
-      console.log("qing")
       setPathId(-1);
 
     }
-  },[currentTool])
+  },[props.currentTool])
 
   const edtiorRef = useRef<SVGSVGElement>(null);
   var clickTimeChange:any;
@@ -88,40 +87,28 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     switch (UIStore.mouseState.type) {
       case (nodeTypes.AnchorPoint): {
         setNode({
+          ...node,
           posX: x,
           posY: y,
-          ctrPosX: node.ctrPosX,
-          ctrPosY: node.ctrPosY,
-          ctr2PosX: node.ctr2PosX,
-          ctr2PosY: node.ctr2PosY
         });
-
         break;
       }
 
       case (nodeTypes.Ctr1Point): {
         setNode({
-          posX: node.posX,
-          posY: node.posY,
+          ...node,
           ctrPosX: x,
           ctrPosY: y,
-          ctr2PosX: node.ctr2PosX,
-          ctr2PosY: node.ctr2PosY
         });
-
         break;
       }
 
       case (nodeTypes.Ctr2Point): {
         setNode({
-          posX: node.posX,
-          posY: node.posY,
-          ctrPosX: node.ctrPosX,
-          ctrPosY: node.ctrPosY,
+          ...node,
           ctr2PosX: x,
           ctr2PosY: y
         });
-
         break;
       }
       
@@ -145,6 +132,8 @@ const EditorContainer: React.FC<Props> = (props) =>  {
                 editing.current=true;
               } else {
                 let _pathId = pathId;
+                const { x, y } = getRelativePositon(e)
+
                 if (_pathId === -1) {
                   if (startNode.posX > -1 && startNode.posY > -1) {
                     _pathId = UIStore.addPath()
@@ -152,12 +141,12 @@ const EditorContainer: React.FC<Props> = (props) =>  {
                     UIStore.addNodes(_pathId, startNode.posX, startNode.posY);
                     setStartNode({posX : -1, posY: -1});
                   } else {
-                    setStartNode({posX : e.pageX - editorInfo.left, posY: e.pageY - editorInfo.top});
+                    setStartNode({posX : x, posY: y});
                     return;
                   }
 
                 }
-                UIStore.addNodes(_pathId, e.pageX - editorInfo.left, e.pageY - editorInfo.top)
+                UIStore.addNodes(_pathId, x, y)
               }
             }
           }
