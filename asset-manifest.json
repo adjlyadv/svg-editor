@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/svg-editor/static/css/main.7fb092f3.chunk.css",
-    "main.js": "/svg-editor/static/js/main.b0070bb2.chunk.js",
-    "main.js.map": "/svg-editor/static/js/main.b0070bb2.chunk.js.map",
-    "runtime-main.js": "/svg-editor/static/js/runtime-main.d995c6d4.js",
-    "runtime-main.js.map": "/svg-editor/static/js/runtime-main.d995c6d4.js.map",
-    "static/js/2.38277a73.chunk.js": "/svg-editor/static/js/2.38277a73.chunk.js",
-    "static/js/2.38277a73.chunk.js.map": "/svg-editor/static/js/2.38277a73.chunk.js.map",
-    "static/js/3.ad08830d.chunk.js": "/svg-editor/static/js/3.ad08830d.chunk.js",
-    "static/js/3.ad08830d.chunk.js.map": "/svg-editor/static/js/3.ad08830d.chunk.js.map",
+    "main.css": "/svg-editor/static/css/main.ab75bcf2.chunk.css",
+    "main.js": "/svg-editor/static/js/main.456679a6.chunk.js",
+    "main.js.map": "/svg-editor/static/js/main.456679a6.chunk.js.map",
+    "runtime-main.js": "/svg-editor/static/js/runtime-main.bc876526.js",
+    "runtime-main.js.map": "/svg-editor/static/js/runtime-main.bc876526.js.map",
+    "static/js/2.78403c0b.chunk.js": "/svg-editor/static/js/2.78403c0b.chunk.js",
+    "static/js/2.78403c0b.chunk.js.map": "/svg-editor/static/js/2.78403c0b.chunk.js.map",
+    "static/js/3.a840dbc5.chunk.js": "/svg-editor/static/js/3.a840dbc5.chunk.js",
+    "static/js/3.a840dbc5.chunk.js.map": "/svg-editor/static/js/3.a840dbc5.chunk.js.map",
     "index.html": "/svg-editor/index.html",
-    "static/css/main.7fb092f3.chunk.css.map": "/svg-editor/static/css/main.7fb092f3.chunk.css.map",
-    "static/js/2.38277a73.chunk.js.LICENSE.txt": "/svg-editor/static/js/2.38277a73.chunk.js.LICENSE.txt",
+    "static/css/main.ab75bcf2.chunk.css.map": "/svg-editor/static/css/main.ab75bcf2.chunk.css.map",
+    "static/js/2.78403c0b.chunk.js.LICENSE.txt": "/svg-editor/static/js/2.78403c0b.chunk.js.LICENSE.txt",
     "static/media/circle.292ce4e1.svg": "/svg-editor/static/media/circle.292ce4e1.svg",
     "static/media/line.86048c7a.svg": "/svg-editor/static/media/line.86048c7a.svg",
     "static/media/mouse.dfeff54d.svg": "/svg-editor/static/media/mouse.dfeff54d.svg",
@@ -19,9 +19,9 @@
     "static/media/rectangle.d8ea8f58.svg": "/svg-editor/static/media/rectangle.d8ea8f58.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.d995c6d4.js",
-    "static/js/2.38277a73.chunk.js",
-    "static/css/main.7fb092f3.chunk.css",
-    "static/js/main.b0070bb2.chunk.js"
+    "static/js/runtime-main.bc876526.js",
+    "static/js/2.78403c0b.chunk.js",
+    "static/css/main.ab75bcf2.chunk.css",
+    "static/js/main.456679a6.chunk.js"
   ]
 }
