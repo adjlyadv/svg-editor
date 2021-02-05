@@ -23,6 +23,9 @@ const path: React.FC<Props> = observer((props: Props) => {
     const getD = (nodes: string | any[]) => {
 
       let d = "";
+      if(nodes.length === 1){//钢笔增加路径的时候对第一个节点的渲染
+        return d;
+      }
       for (let i = 0; i < nodes.length; i++) {
         if (i === 0) {
           d += `M ${nodes[i].posX} ${nodes[i].posY} C ${nodes[i].ctrPosX} ${nodes[i].ctrPosY} `

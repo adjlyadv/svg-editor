@@ -60,7 +60,7 @@ class UIstore {
             posY: 261,
             ctrPosX: 309.5,
             ctrPosY: 309.5,
-          },
+          }
         ],
         strokeWidth: 5,
         stroke: "#000000",
@@ -72,7 +72,7 @@ class UIstore {
   addPath = () => {
     this.pathList.push(
         {
-          id: this.pathList.length - 1,
+          id: this.pathList.length,
           nodes: [],
           strokeWidth: 5,
           stroke: "#000000",
@@ -89,19 +89,31 @@ class UIstore {
   addNodes =(pathId: number , posX: number, posY: number, ctrPosX?: number, ctrPosY?: number, ctr2PosX?: number, ctr2PoxY?: number, index?: number) => {
 
     const nodesLength = this.pathList[pathId].nodes.length;
+    if(nodesLength === 0){
+      this.pathList[pathId].nodes.push(
+        {
+          posX: posX,
+          posY: posY,
+          ctrPosX: ctrPosX || posX,
+          ctrPosY: ctrPosY || posY
+        }
+      )
+    }
+    else{
+      this.pathList[pathId].nodes = [
+        ...this.pathList[pathId].nodes.slice(0, index || nodesLength - 1),
+        {
+          posX: posX,
+          posY: posY,
+          ctrPosX: ctrPosX || posX,
+          ctrPosY: ctrPosY || posY,
+          ctr2PosX: ctr2PosX,
+          ctr2PosY: ctr2PoxY
+        },
+        ...this.pathList[pathId].nodes.slice(index || nodesLength - 1)
+      ]
 
-    this.pathList[pathId].nodes = [
-      ...this.pathList[pathId].nodes.slice(0, index || nodesLength - 1),
-      {
-        posX: posX,
-        posY: posY,
-        ctrPosX: ctrPosX || posX,
-        ctrPosY: ctrPosY || posY,
-        ctr2PosX: ctr2PosX,
-        ctr2PosY: ctr2PoxY
-      },
-      ...this.pathList[pathId].nodes.slice(index || nodesLength - 1)
-    ]
+    }
 
   }
 
