@@ -1,4 +1,4 @@
-import React, { useEffect, useRef , useState} from 'react';
+import React, { Fragment,useEffect, useRef , useState} from 'react';
 import { Node as typeNode, UIStore } from '../stores/UIStore';
 import Path from '../elements/path';
 import { nodeTypes } from '../elements/constants';
@@ -24,153 +24,206 @@ const EditorContainer: React.FC<Props> = (props) =>  {
       UIStore.editorInfo.left = editorInfo.left;
       setEditorInfo(editorInfo);
     }
-
   }, [])
 
-  //cucurrentTool改变
-  useEffect(() => {
-    if (props.currentTool !== "pen") {
-      setStartNode({posX: -1, posY: -1});
-      setPathId(-1);
-
-    }
-  },[props.currentTool])
-
   const edtiorRef = useRef<SVGSVGElement>(null);
-  var clickTimeChange:any;
-
-  const editing = useRef<boolean>(true)
+  const editing = useRef<boolean>(false)
   const [pathId, setPathId] = useState<number>(-1)
   const [editorInfo, setEditorInfo] = useState(UIStore.editorInfo);
-
-  const [startNode,setStartNode] = useState(
-      {
-        posX : -1,
-        posY :-1
-      }
-  )
 
   const pathList = UIStore.pathList;
   let pathid = UIStore.mouseState.pathid;
   let nodeid = UIStore.mouseState.nodeid;
 
-
+ 
   const [node, setNode] = useState<typeNode>(pathList[UIStore.mouseState.pathid].nodes[UIStore.mouseState.nodeid]);
-  
   
   useEffect(() => {
     UIStore.setNodes(UIStore.mouseState.pathid, UIStore.mouseState.nodeid, node);
   }, [node])
 
+  const [newNode, setNewnode] = useState<typeNode>(pathList[pathid].nodes[nodeid]);
+  const [lastNode, setLastnode] = useState<typeNode>(pathList[pathid].nodes[nodeid]);
+  const [startNode, setStartNode] = useState<Boolean>(false);
+
   const handleMouseDown = (event: any) => {
     event.stopPropagation();
-    pathid = UIStore.mouseState.pathid;
-    nodeid = UIStore.mouseState.nodeid;
-    let node1 = UIStore.pathList[pathid].nodes[nodeid];
-    setNode({
-      posX: node1.posX,
-      posY: node1.posY,
-      ctrPosX: node1.ctrPosX,
-      ctrPosY: node1.ctrPosY,
-      ctr2PosX: node1.ctr2PosX,
-      ctr2PosY: node1.ctr2PosY
-    });
+    const { x, y } = getRelativePositon(event);
+    switch(props.currentTool){
+      case 'mouse':{
+            pathid = UIStore.mouseState.pathid;
+            nodeid = UIStore.mouseState.nodeid
+            let node1 = UIStore.pathList[pathid].nodes[nodeid];
+            setNode({
+              ...node1
+            });
+          }
+          break;
+      case 'pen':{//钢笔工具 按下的时候确定一个锚点的posx posy
+        if(!editing.current){
+          editing.current=true;
+          setStartNode(true);
+          setLastnode({//是路径的第一个锚点时 上一个锚点设置成一样
+            posX:x,
+            posY:y,
+            ctrPosX:x,
+            ctrPosY:y,
+            ctr2PosX:x,
+            ctr2PosY:y
+          })
+        }
+        setNewnode(
+          {
+            posX:x,
+            posY:y,
+            ctrPosX:x,
+            ctrPosY:y,
+            ctr2PosX:x,
+            ctr2PosY:y
+          }
+        )
+      }
+      break;
+    }
   }
+    
 
   const handleMouseMove = _.debounce((event: any) => {
     event.stopPropagation();
-    if(!UIStore.mouseState.drugging){
-      return
-    }
     const { x, y } = getRelativePositon(event);
-
-    switch (UIStore.mouseState.type) {
-      case (nodeTypes.AnchorPoint): {
-        setNode({
-          ...node,
-          posX: x,
-          posY: y,
-        });
-        break;
+    switch(props.currentTool){
+      case 'mouse':{
+        if(!UIStore.mouseState.drugging){
+          return
+        }
+        switch (UIStore.mouseState.type) {
+          case (nodeTypes.AnchorPoint): {
+            setNode({
+              ...node,
+              posX: x,
+              posY: y,
+            });
+            break;
+          }
+    
+          case (nodeTypes.Ctr1Point): {
+            setNode({
+              ...node,
+              ctrPosX: x,
+              ctrPosY: y,
+            });
+            break;
+          }
+    
+          case (nodeTypes.Ctr2Point): {
+            setNode({
+              ...node,
+              ctr2PosX: x,
+              ctr2PosY: y
+            });
+            break;
+          }
       }
-
-      case (nodeTypes.Ctr1Point): {
-        setNode({
-          ...node,
-          ctrPosX: x,
-          ctrPosY: y,
-        });
-        break;
+    }
+      break;
+      case 'pen':{//钢笔工具 如果在编辑模式 移动鼠标的时候不断变化控制点
+        if(editing.current){
+          setNewnode(
+            {
+              ...newNode,
+              ctrPosX:x,
+              ctrPosY:y,
+            }
+          )
+        }
       }
-
-      case (nodeTypes.Ctr2Point): {
-        setNode({
-          ...node,
-          ctr2PosX: x,
-          ctr2PosY: y
-        });
-        break;
-      }
-      
+      break;
     }
   }, 5, { 'trailing': true })
-  
+ 
+
   const handleMouseUp = (event: any) => {
     event.stopPropagation();
-    UIStore.setMouseState(nodeTypes.AnchorPoint, false, pathid, nodeid);
+    switch(props.currentTool){
+      case 'mouse':{
+        UIStore.setMouseState(nodeTypes.AnchorPoint, false, pathid, nodeid);
+      }
+      break;
+      //bug: 添加最后一个锚点的时候会有两个控制点
+      case 'pen':{//松开鼠标确定一个点 加入path里
+        let _pathId = pathId;
+        if(pathId === -1){
+          _pathId = UIStore.addPath()
+          setPathId(_pathId);
+        }
+        UIStore.addNodes2(_pathId,newNode.posX,newNode.posY,newNode.ctrPosX,newNode.ctrPosY);
+        if(startNode){// 处理第一个节点的渲染
+          const mockCtrX = newNode.posX * 2 - newNode.ctrPosX;
+          const mockCtrY = newNode.posY * 2 - newNode.ctrPosY;
+          setLastnode({
+            ...newNode,
+            ctrPosX: mockCtrX,
+            ctrPosY: mockCtrY
+          })
+          setStartNode(false);
+        }else{
+          setLastnode({
+            ...newNode
+          })
+        }
+        
+
+      }
+      break;
+    } 
   }
-//创建新的路径 点击
-  const pathClick:any = (e:any) => {
-
-    e.stopPropagation();
-    clearTimeout(clickTimeChange);
-    clickTimeChange = setTimeout(
-        () => {
-          switch (props.currentTool) {
-            case "pen": {
-              if (!editing.current) {
-                editing.current=true;
-              } else {
-                let _pathId = pathId;
-                const { x, y } = getRelativePositon(e)
-
-                if (_pathId === -1) {
-                  if (startNode.posX > -1 && startNode.posY > -1) {
-                    _pathId = UIStore.addPath()
-                    setPathId(_pathId);
-                    UIStore.addNodes(_pathId, startNode.posX, startNode.posY);
-                    setStartNode({posX : -1, posY: -1});
-                  } else {
-                    setStartNode({posX : x, posY: y});
-                    return;
-                  }
-
-                }
-                UIStore.addNodes(_pathId, x, y)
-              }
-            }
-          }
-          
-        },
-        300
-    );
-  }
-
-  
+  //bug: 双击会引发两次down up 会添加连个一样的锚点
   const pathDoubleClick:any = () => {
-    clearTimeout(clickTimeChange);
     editing.current=false;
     setPathId(-1);
+  }
+
+  const addNodes:any = () =>{
+    { 
+      if(editing.current){
+        let getD = "";
+        let width = 0;
+      
+          const mockCtrX = lastNode.posX * 2 - lastNode.ctrPosX;
+          const mockCtrY = lastNode.posY * 2 - lastNode.ctrPosY;
+          getD = `M ${lastNode.posX} ${lastNode.posY} C ${mockCtrX} ${mockCtrY} ${newNode.ctrPosX} ${newNode.ctrPosY}`;
+        
+
+        if(lastNode.posX !== newNode.posX && lastNode.posY !== newNode.posY){
+          getD += ` ${newNode.posX} ${newNode.posY}`;
+          width = 1;
+        }else{
+          getD += ` ${newNode.ctrPosX} ${newNode.ctrPosY}`;//当没有确定新的锚点时
+          width = 0;
+        }
+
+        return(
+          <Fragment>
+            <path d = {getD}  fill="none" stroke="#000" strokeWidth="1"/>
+            <circle className="point-control" cx={newNode.posX} cy={newNode.posY} stroke="#55f" r="10" />
+            <line x1={newNode.posX} y1={newNode.posY} x2={newNode.ctrPosX} y2={newNode.ctrPosY} stroke="#555" strokeWidth={width} />
+            <circle className="point-control" cx={newNode.ctrPosX} cy={newNode.ctrPosY} stroke="#000" r="10" />
+          </Fragment>  
+        )
+      }
+    }
   }
 
   return(
     <div className="editor-container">
       <svg ref={edtiorRef} className="editor-svg" width={editorInfo.width} height={editorInfo.height}
            onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}
-           onDoubleClick={pathDoubleClick} onClick={pathClick}>
+           onDoubleClick={pathDoubleClick}>
         {pathList.map(path => (
           <Path key={path.id} path={path} setPathid={props.set} currentTool={props.currentTool}/>
         ))}
+        {addNodes()}
+
       </svg>
     </div>
   )
