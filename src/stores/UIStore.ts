@@ -64,7 +64,7 @@ class UIstore {
         ],
         strokeWidth: 5,
         stroke: "#000000",
-        fill: "none"
+        fill: "#ffffff"
       }
     )
   }
@@ -76,7 +76,7 @@ class UIstore {
           nodes: [],
           strokeWidth: 5,
           stroke: "#000000",
-          fill: "none"
+          fill: "#ffffff"
         }
     )
     return this.pathList.length - 1;
@@ -89,49 +89,33 @@ class UIstore {
   addNodes =(pathId: number , posX: number, posY: number, ctrPosX?: number, ctrPosY?: number, ctr2PosX?: number, ctr2PoxY?: number, index?: number) => {
 
     const nodesLength = this.pathList[pathId].nodes.length;
-
-    this.pathList[pathId].nodes = [
-      ...this.pathList[pathId].nodes.slice(0, index || nodesLength - 1),
-      {
-        posX: posX,
-        posY: posY,
-        ctrPosX: ctrPosX || posX,
-        ctrPosY: ctrPosY || posY,
-        ctr2PosX: ctr2PosX,
-        ctr2PosY: ctr2PoxY
-      },
-      ...this.pathList[pathId].nodes.slice(index || nodesLength - 1)
-    ]
-
-  }
-
-  addNodes2 =(pathId: number , posX: number, posY: number, ctrPosX: number, ctrPosY: number) => {
-
-    if(this.pathList[pathId].nodes.length === 0){//增加第一个节点只需要一个控制点
+    if(nodesLength === 0){
       this.pathList[pathId].nodes.push(
         {
           posX: posX,
           posY: posY,
-          ctrPosX: ctrPosX,
-          ctrPosY: ctrPosY,
-        }
-      )
-    }else{
-      const mockCtrX = posX * 2 - ctrPosX;
-      const mockCtrY = posY * 2 - ctrPosY;
-      this.pathList[pathId].nodes.push(
-        {
-          posX: posX,
-          posY: posY,
-          ctrPosX: ctrPosX,
-          ctrPosY: ctrPosY,
-          ctr2PosX: mockCtrX,
-          ctr2PosY: mockCtrY
+          ctrPosX: ctrPosX || posX,
+          ctrPosY: ctrPosY || posY
         }
       )
     }
-  }
+    else{
+      this.pathList[pathId].nodes = [
+        ...this.pathList[pathId].nodes.slice(0, index || nodesLength - 1),
+        {
+          posX: posX,
+          posY: posY,
+          ctrPosX: ctrPosX || posX,
+          ctrPosY: ctrPosY || posY,
+          ctr2PosX: ctr2PosX,
+          ctr2PosY: ctr2PoxY
+        },
+        ...this.pathList[pathId].nodes.slice(index || nodesLength - 1)
+      ]
 
+    }
+
+  }
 
   setMouseState = (type: number, dragging:boolean, pathid:number, nodeid:number) => {
     this.mouseState.pathid = pathid;

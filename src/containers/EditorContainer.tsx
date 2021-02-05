@@ -155,10 +155,11 @@ const EditorContainer: React.FC<Props> = (props) =>  {
                 _pathId = UIStore.addPath()
                 setPathId(_pathId);
               }
-              UIStore.addNodes2(_pathId,newNode.posX,newNode.posY,newNode.ctrPosX,newNode.ctrPosY);
+              const nodesLength = UIStore.pathList[_pathId].nodes.length;
+              const mockCtrX = newNode.posX * 2 - newNode.ctrPosX;
+              const mockCtrY = newNode.posY * 2 - newNode.ctrPosY;
+              UIStore.addNodes(_pathId,newNode.posX,newNode.posY,newNode.ctrPosX,newNode.ctrPosY,mockCtrX,mockCtrY,nodesLength);
               if(startNode){// 处理第一个节点的渲染
-                const mockCtrX = newNode.posX * 2 - newNode.ctrPosX;
-                const mockCtrY = newNode.posY * 2 - newNode.ctrPosY;
                 setLastnode({
                   ...newNode,
                   ctrPosX: mockCtrX,
