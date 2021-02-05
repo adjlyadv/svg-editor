@@ -1,32 +1,54 @@
 import { observer} from 'mobx-react';
 import React, { Fragment } from 'react';
+import { nodeTypes } from './constants';
 import { Node as typeNode, UIStore } from '../stores/UIStore';
 
 interface Props {
   node: typeNode,
   id: number,
-  pathId: number
+  pathId: number,
+  onClick?: any,
+  onMouseLeave?: any
 }
 
 const Node = observer((props: Props) => {
 
-  const node = UIStore.pathList[props.pathId].nodes[props.id]; 
+  if (props.id === -1) {
+    return (
+      <circle onClick={props.onClick} onMouseLeave={props.onMouseLeave} className="point-control-add" cx={props.node.posX} cy={props.node.posY} />
+    )
+  }
 
-  const handleMouseDown = (elec:boolean, event: any) => {
-    if(elec){
-      UIStore.setMouseState(true,true,props.pathId,props.id);
-      console.log("按下去锚点属于路径"+props.pathId+"的锚点"+props.id);
-    }else{
-      UIStore.setMouseState(false,true,props.pathId,props.id);
-      console.log("按下去控制点属于路径"+props.pathId+"的锚点"+props.id)
+  const node = UIStore.pathList[props.pathId].nodes[props.id];
+
+  const handleMouseDown = (elec:number, event: any) => {
+    switch(elec) {
+      case nodeTypes.AnchorPoint: {
+        UIStore.setMouseState(nodeTypes.AnchorPoint, true, props.pathId, props.id);
+        break;
+      }
+
+      case nodeTypes.Ctr1Point: {
+        UIStore.setMouseState(nodeTypes.Ctr1Point, true, props.pathId, props.id);
+        break;
+      }
+
+      case nodeTypes.Ctr2Point: {
+        UIStore.setMouseState(nodeTypes.Ctr2Point, true, props.pathId, props.id);
+        break
+      }
     }
+
   }
   
   return(
     <Fragment>
-      <circle className="point-control" onMouseDown={(e) => handleMouseDown(true, e)} cx={node.posX} cy={node.posY} stroke="#55f" r="4" />
+      <circle className="point-control" onMouseDown={(e) => handleMouseDown(nodeTypes.AnchorPoint, e)} cx={node.posX} cy={node.posY} />
         <line x1={node.posX} y1={node.posY} x2={node.ctrPosX} y2={node.ctrPosY} stroke="#555" strokeWidth="1" />
-      <circle className="point-control" onMouseDown={(e) => handleMouseDown(false, e)} cx={node.ctrPosX} cy={node.ctrPosY} stroke="#55f" r="4" />
+      <circle className="point-control" onMouseDown={(e) => handleMouseDown(nodeTypes.Ctr1Point, e)} cx={node.ctrPosX} cy={node.ctrPosY} />
+
+      {node.ctr2PosX && node.ctr2PosY && <circle className="point-control" onMouseDown={(e) => handleMouseDown(nodeTypes.Ctr2Point, e)} cx={node.ctr2PosX} cy={node.ctr2PosY} />}
+      {node.ctr2PosX && node.ctr2PosY && <line x1={node.posX} y1={node.posY} x2={node.ctr2PosX} y2={node.ctr2PosY} stroke="#555" strokeWidth="1" />}
     </Fragment>
   )
 

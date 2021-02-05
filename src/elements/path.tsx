@@ -1,7 +1,9 @@
 import React, { Fragment, useState } from 'react';
-import { Node as typeNode } from '../stores/UIStore'
+import { Node as typeNode, UIStore } from '../stores/UIStore';
+import { getRelativePositon } from '../utils/calculate';
 import Node from './node';
-// import Bezier from 'bezier-js';
+import _ from 'lodash';
+import Bezier from 'bezier-js';
 import { observer } from 'mobx-react';
 
 interface Props{
@@ -24,15 +26,12 @@ const path: React.FC<Props> = observer((props: Props) => {
       for (let i = 0; i < nodes.length; i++) {
         if (i === 0) {
           d += `M ${nodes[i].posX} ${nodes[i].posY} C ${nodes[i].ctrPosX} ${nodes[i].ctrPosY} `
-        } else if (i !== nodes.length - 1) {
-          const mockCtrX = nodes[i].posX * 2 - nodes[i].ctrPosX;
-          const mockCtrY = nodes[i].posY * 2 - nodes[i].ctrPosY;
-          d += `${nodes[i].ctrPosX} ${nodes[i].ctrPosY} ${nodes[i].posX} ${nodes[i].posY} C ${mockCtrX} ${mockCtrY} `
+        } else if (i + 1 <= nodes.length - 1) {
+          d += `${nodes[i].ctrPosX} ${nodes[i].ctrPosY} ${nodes[i].posX} ${nodes[i].posY} C ${nodes[i].ctr2PosX} ${nodes[i].ctr2PosY} `
         } else {
           d += `${nodes[i].ctrPosX} ${nodes[i].ctrPosY} ${nodes[i].posX} ${nodes[i].posY}`
         }
       }
-      console.log(d)
       
       return d
     }
@@ -45,17 +44,14 @@ const path: React.FC<Props> = observer((props: Props) => {
 
         if (i !== 0 && i + 1 !== nodes.length) {
           const node = nodes[i];
-          const mockCtrX = nodes[i].posX * 2 - nodes[i].ctrPosX;
-          const mockCtrY = nodes[i].posY * 2 - nodes[i].ctrPosY;
 
           mockNode = {
             posX: node.posX,
             posY: node.posY,
-            ctrPosX: mockCtrX,
-            ctrPosY: mockCtrY
+            ctrPosX: node.ctr2PosX,
+            ctrPosY: node.ctr2PosY
           }
         }
-
 
         const attrD = getD([mockNode ? mockNode : nodes[i], nodes[i + 1]]);
         paths.push({
@@ -81,14 +77,95 @@ const path: React.FC<Props> = observer((props: Props) => {
       props.setPathid(props.path.id);
     }
 
+    const handleOnMouseMove = _.throttle((event: any, item: any) => {
+      event.stopPropagation();
+      const { x, y } = getRelativePositon(event);
+
+      const nums = item.nodes.reduce((pre: Array<number>, cur: typeNode, index: number) => {
+        if (index === item.nodes.length - 1) {
+          pre.push(cur.ctrPosX, cur.ctrPosY, cur.posX, cur.posY);
+        } else {
+          pre.push(cur.posX, cur.posY, cur.ctrPosX, cur.ctrPosY);
+        }
+
+        return pre
+      }, []).flat(1);
+
+      const bezier = new Bezier(nums);
+      setBezier(bezier);
+      const nodeInfo = bezier.project({x, y});
+
+      setNewNode({
+        posX: nodeInfo.x,
+        posY: nodeInfo.y,
+        ctrPosX: nodeInfo.x,
+        ctrPosY: nodeInfo.y,
+        t: nodeInfo.t
+      })
+
+    }, 50);
+
+    const handleAddNewNodeClick = () => {
+      const newPath = bezier?.split(newNode.t); // 这里贝塞尔曲线被分成了两个部分，需要分别更新左右两端
+      let points = newPath?.left.points; // 0 1 2 3 分别是第一个点的位置、控制点，第二个点的控制点、位置
+
+      if (!newPath || !points) {
+        return
+      }
+
+      let index = nodes.findIndex((node) => {
+        return node.posX === bezier?.points[0].x && node.posY === bezier?.points[0].y
+      });
+
+      let node = {
+        posX: points[0].x,
+        posY: points[0].y,
+        ctrPosX: index ? UIStore.pathList[id].nodes[index].ctrPosX : points[1].x,
+        ctrPosY: index ? UIStore.pathList[id].nodes[index].ctrPosY : points[1].y,
+        ctr2PosX: index ? points[1].x : undefined,
+        ctr2PosY: index ? points[1].y : undefined
+      } // 这里要判定一下index为0  即起始节点的情况，做特殊处理
+
+      let addingNode = {
+        posX: points[3].x,
+        posY: points[3].y,
+        ctrPosX: points[2].x,
+        ctrPosY: points[2].y,
+        ctr2PosX: 0,
+        ctr2PosY: 0
+      } // 这是新的节点信息
+
+      UIStore.setNodes(id, index, node); // 更新左端点
+
+      points = newPath?.right.points;
+
+      node = {
+        posX: points[3].x,
+        posY: points[3].y,
+        ctrPosX: points[2].x,
+        ctrPosY: points[2].y,
+        ctr2PosX: UIStore.pathList[id].nodes[index + 1].ctr2PosX || undefined,
+        ctr2PosY: UIStore.pathList[id].nodes[index + 1].ctr2PosY || undefined
+      }
+
+      addingNode.ctr2PosX = points[1].x;
+      addingNode.ctr2PosY = points[1].y; // 新的节点信息需要左右两端的
+      
+      UIStore.setNodes(id, index + 1, node); // 更新右端点
+
+      UIStore.addNodes(id, addingNode.posX, addingNode.posY, addingNode.ctrPosX, addingNode.ctrPosY, addingNode.ctr2PosX, addingNode.ctr2PosY, index + 1);
+      setNewNode(null);
+    }
 
     const [editing, setEditing] = useState<boolean>(false);
+    const [newNode, setNewNode] = useState<any>();
+    const [bezier, setBezier] = useState<Bezier>();
     const { id, nodes } = props.path;
 
     if (!editing) {
       return (
         <Fragment>
-          <path onDoubleClick={handleDoubleClick} onClick={handleClick} d={getD(nodes)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke}fill={props.path.fill}/>
+          <path onDoubleClick={handleDoubleClick} onClick={handleClick} d={getD(nodes)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke} fill={props.path.fill}/>
         </Fragment>
       );
     }
@@ -100,13 +177,14 @@ const path: React.FC<Props> = observer((props: Props) => {
         {
           paths.map(item => 
             <Fragment>
-              <path d={item.attrD} onClick={handleClick} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke}fill={props.path.fill}/>
-              {nodes.map((node, index) => 
-                <Node node={node} id={index} pathId={id} />
-              )}
+              <path key={item.attrD} onClick={handleClick} d={item.attrD} onMouseOver={e => handleOnMouseMove(e, item)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke}fill={props.path.fill}/>
             </Fragment>
           )
         }
+        {nodes.map((node, index) => 
+          <Node node={node} id={index} pathId={id} />
+        )}
+        {newNode && <Node node={newNode} id={-1} pathId={-1} onClick={handleAddNewNodeClick} onMouseLeave={() => setNewNode(null)} />}
       </Fragment>
     )
 
