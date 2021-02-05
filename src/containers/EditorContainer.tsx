@@ -48,7 +48,6 @@ const EditorContainer: React.FC<Props> = (props) =>  {
 
   let mouseUpTimeChange:any;
 
-
   const handleMouseDown = (event: any) => {
     event.stopPropagation();
     const { x, y } = getRelativePositon(event);
@@ -62,7 +61,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
         });
       }
       break;
-      case 'pen':{//钢笔工具 按下的时候确定一个锚点的posx posy
+      case 'pen'://钢笔工具 按下的时候确定一个锚点的posx posy
         if(!editing.current){
           editing.current=true;
           setStartNode(true);
@@ -83,7 +82,6 @@ const EditorContainer: React.FC<Props> = (props) =>  {
           ctr2PosX:x,
           ctr2PosY:y
         })
-      }
         break;
     }
   }
@@ -93,7 +91,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     event.stopPropagation();
     const { x, y } = getRelativePositon(event);
     switch(props.currentTool){
-      case 'mouse':{
+      case 'mouse':
         if(!UIStore.mouseState.drugging){
           return
         }
@@ -125,9 +123,9 @@ const EditorContainer: React.FC<Props> = (props) =>  {
             break;
           }
       }
-    }
+    
       break;
-      case 'pen':{//钢笔工具 如果在编辑模式 移动鼠标的时候不断变化控制点
+      case 'pen'://钢笔工具 如果在编辑模式 移动鼠标的时候不断变化控制点
         if(editing.current){
           setNewnode(
             {
@@ -137,7 +135,6 @@ const EditorContainer: React.FC<Props> = (props) =>  {
             }
           )
         }
-      }
       break;
     }
   }, 5, { 'trailing': true })
@@ -149,9 +146,8 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     mouseUpTimeChange = setTimeout(
         () => {
           switch(props.currentTool){
-            case 'mouse':{
+            case 'mouse':
               UIStore.setMouseState(nodeTypes.AnchorPoint, false, pathid, nodeid);
-            }
             break;
             case 'pen':{//松开鼠标确定一个点 加入path里
               let _pathId = pathId;
@@ -187,16 +183,12 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     setPathId(-1);
   }
 
-  const addNodes:any = () =>{
-    { 
-      if(editing.current){
-        let getD = "";
+  const addNodes:any = () =>{ 
+    if(editing.current){
+        const mockCtrX = lastNode.posX * 2 - lastNode.ctrPosX;
+        const mockCtrY = lastNode.posY * 2 - lastNode.ctrPosY;
+        let getD = `M ${lastNode.posX} ${lastNode.posY} C ${mockCtrX} ${mockCtrY} ${newNode.ctrPosX} ${newNode.ctrPosY}`;
         let width = 0;
-      
-          const mockCtrX = lastNode.posX * 2 - lastNode.ctrPosX;
-          const mockCtrY = lastNode.posY * 2 - lastNode.ctrPosY;
-          getD = `M ${lastNode.posX} ${lastNode.posY} C ${mockCtrX} ${mockCtrY} ${newNode.ctrPosX} ${newNode.ctrPosY}`;
-        
 
         if(lastNode.posX !== newNode.posX && lastNode.posY !== newNode.posY){
           getD += ` ${newNode.posX} ${newNode.posY}`;
@@ -205,7 +197,6 @@ const EditorContainer: React.FC<Props> = (props) =>  {
           getD += ` ${newNode.ctrPosX} ${newNode.ctrPosY}`;//当没有确定新的锚点时
           width = 0;
         }
-
         return(
           <Fragment>
             <path d = {getD}  fill="none" stroke="#000" strokeWidth="1"/>
@@ -214,7 +205,6 @@ const EditorContainer: React.FC<Props> = (props) =>  {
             <circle className="point-control" cx={newNode.ctrPosX} cy={newNode.ctrPosY} stroke="#000" r="10" />
           </Fragment>  
         )
-      }
     }
   }
 
@@ -227,7 +217,6 @@ const EditorContainer: React.FC<Props> = (props) =>  {
           <Path key={path.id} path={path} setPathid={props.set} currentTool={props.currentTool}/>
         ))}
         {addNodes()}
-
       </svg>
     </div>
   )
