@@ -30,7 +30,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
   const editing = useRef<boolean>(false)
   const [pathId, setPathId] = useState<number>(-1)
   const [editorInfo, setEditorInfo] = useState(UIStore.editorInfo);
-
+  const [startNode, setStartNode] = useState<Boolean>(false);
   const pathList = UIStore.pathList;
   let pathid = UIStore.mouseState.pathid;
   let nodeid = UIStore.mouseState.nodeid;
@@ -42,9 +42,27 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     UIStore.setNodes(UIStore.mouseState.pathid, UIStore.mouseState.nodeid, node);
   }, [node])
 
+  useEffect(() => {
+    if (props.currentTool !== "pen"){
+      const _pathid=pathId;
+      if (_pathid !== -1 && UIStore.pathList[_pathid].nodes.length < 2){
+        UIStore.deletePath(_pathid);
+        editing.current=false;
+        setPathId(-1);
+      }
+      else if (_pathid !== -1 && UIStore.pathList[_pathid].nodes.length >= 2){
+        editing.current=false;
+        setPathId(-1);
+      }
+
+
+    }
+    console.log((UIStore.pathList))
+  }, [props.currentTool,pathId])
+
   const [newNode, setNewnode] = useState<typeNode>(pathList[pathid].nodes[nodeid]);
   const [lastNode, setLastnode] = useState<typeNode>(pathList[pathid].nodes[nodeid]);
-  const [startNode, setStartNode] = useState<Boolean>(false);
+
 
   let mouseUpTimeChange:any;
 
@@ -150,6 +168,9 @@ const EditorContainer: React.FC<Props> = (props) =>  {
               UIStore.setMouseState(nodeTypes.AnchorPoint, false, pathid, nodeid);
             break;
             case 'pen':{//松开鼠标确定一个点 加入path里
+              if (!editing.current){
+                return;
+              }
               let _pathId = pathId;
               if(pathId === -1){
                 _pathId = UIStore.addPath()
@@ -171,6 +192,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
                   ...newNode
                 })
               }
+              console.log((UIStore.pathList))
             }
             break;
           } 

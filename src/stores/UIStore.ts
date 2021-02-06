@@ -82,6 +82,10 @@ class UIstore {
     return this.pathList.length - 1;
   }
 
+  deletePath = (pathId: number) => {
+    delete this.pathList[pathId]
+  }
+
   setNodes = (pathId: number, nodeId: number, node: Node) => {
     this.pathList[pathId].nodes[nodeId] = node;
   }
