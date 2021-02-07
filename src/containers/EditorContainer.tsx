@@ -87,7 +87,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
   }
     
 
-  const handleMouseMove = _.debounce((event: any) => {
+  const handleMouseMove = _.throttle((event: any) => {
     event.stopPropagation();
     const { x, y } = getRelativePositon(event);
     switch(props.currentTool){
