@@ -70,7 +70,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     event.stopPropagation();
     const { x, y } = getRelativePositon(event);
     switch(props.currentTool){
-      case 'mouse':{
+      case 'mouse_drag_node':{
         pathid = UIStore.mouseState.pathid;
         nodeid = UIStore.mouseState.nodeid
         let node1 = UIStore.pathList[pathid].nodes[nodeid];
@@ -109,7 +109,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     event.stopPropagation();
     const { x, y } = getRelativePositon(event);
     switch(props.currentTool){
-      case 'mouse':
+      case 'mouse_drag_node':
         if(!UIStore.mouseState.drugging){
           return
         }
@@ -164,7 +164,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     mouseUpTimeChange = setTimeout(
         () => {
           switch(props.currentTool){
-            case 'mouse':
+            case 'mouse_drag_node':
               UIStore.setMouseState(nodeTypes.AnchorPoint, false, pathid, nodeid);
             break;
             case 'pen':{//松开鼠标确定一个点 加入path里
