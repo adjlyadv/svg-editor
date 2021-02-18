@@ -9,7 +9,7 @@ import '../style/BasicContainer.scss'
 const BasicLayout = () => {
 
   const [currentTool, setCurrenttool] = useState("mouse");
-  const [currentPathid, setCurrentPathid] = useState(0);
+  const [currentPathid, setCurrentPathid] = useState(-1);
 
   return(
     <div className="basic-container">

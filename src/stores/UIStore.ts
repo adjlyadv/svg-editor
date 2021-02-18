@@ -1,7 +1,8 @@
-import { makeAutoObservable } from 'mobx';
+import { add } from 'lodash';
+import { makeAutoObservable, toJS} from 'mobx';
 import { nodeTypes } from '../elements/constants';
-
-export interface Node {
+import { myIndexDB } from './myIndexDb';
+export interface Node{
   posX: number,
   posY: number,
   ctrPosX: number,
@@ -26,18 +27,18 @@ class UIstore {
     left: 0,
     top: 0
   }
-  mouseState ={
+  mouseState = {
     type: nodeTypes.AnchorPoint,
     drugging: false,
-    pathid: 0,
-    nodeid: 0
+    pathid: -1,
+    nodeid: -1
   }
 
   pathList: Path[] = [];
-
+  
   constructor() {
     makeAutoObservable(this);
-    this.pathList.push(
+/*this.pathList.push(
       {
         id: 0,
         nodes: [
@@ -66,7 +67,12 @@ class UIstore {
         stroke: "#000000",
         fill: "#ffffff"
       }
-    )
+    )*/
+ 
+  }
+
+  initPathList = (id:number,path:Path) =>{
+    this.pathList[id] = path;
   }
 
   addPath = () => {
@@ -84,10 +90,16 @@ class UIstore {
 
   deletePath = (pathId: number) => {
     delete this.pathList[pathId]
+    //delete
   }
 
   setNodes = (pathId: number, nodeId: number, node: Node) => {
-    this.pathList[pathId].nodes[nodeId] = node;
+    if(this.pathList[pathId]){
+      this.pathList[pathId].nodes[nodeId] = node;
+      let path = toJS(this.pathList[pathId]);
+      myIndexDB.update(path);
+    }
+    
   }
 
   addNodes =(pathId: number , posX: number, posY: number, ctrPosX?: number, ctrPosY?: number, ctr2PosX?: number, ctr2PoxY?: number, index?: number) => {
@@ -102,6 +114,9 @@ class UIstore {
           ctrPosY: ctrPosY || posY
         }
       )
+      let path = toJS(this.pathList[pathId]);
+      myIndexDB.add(path);
+
     }
     else{
       this.pathList[pathId].nodes = [
@@ -116,7 +131,8 @@ class UIstore {
         },
         ...this.pathList[pathId].nodes.slice(index || nodesLength - 1)
       ]
-
+      let path = toJS(this.pathList[pathId]);
+      myIndexDB.update(path);
     }
 
   }
@@ -151,6 +167,8 @@ class UIstore {
         break;
       default:        
     }
+    let path = toJS(this.pathList[pathId]);
+    myIndexDB.update(path);
   }
 }
 
