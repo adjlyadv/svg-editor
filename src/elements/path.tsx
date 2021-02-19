@@ -73,7 +73,7 @@ const path: React.FC<Props> = observer((props: Props) => {
     
     const handleDoubleClick = (event: any) => {
       event.stopPropagation();
-      if(props.currentTool === 'mouse')
+      if(props.currentTool.indexOf("mouse") !== -1)
         setEditing(true);
     }
 
@@ -84,6 +84,9 @@ const path: React.FC<Props> = observer((props: Props) => {
 
     const handleOnMouseMove = _.throttle((event: any, item: any) => {
       event.stopPropagation();
+      if(props.currentTool !== "mouse_add_node"){
+        return
+      }
       const { x, y } = getRelativePositon(event);
 
       const nums = item.nodes.reduce((pre: Array<number>, cur: typeNode, index: number) => {
@@ -111,6 +114,9 @@ const path: React.FC<Props> = observer((props: Props) => {
     }, 50);
 
     const handleAddNewNodeClick = () => {
+      if(props.currentTool !== "mouse_add_node"){
+        return
+      }
       const newPath = bezier?.split(newNode.t); // 这里贝塞尔曲线被分成了两个部分，需要分别更新左右两端
       let points = newPath?.left.points; // 0 1 2 3 分别是第一个点的位置、控制点，第二个点的控制点、位置
 
