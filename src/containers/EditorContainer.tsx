@@ -57,13 +57,12 @@ const EditorContainer: React.FC<Props> = (props) =>  {
 
 
     }
-    console.log((UIStore.pathList))
   }, [props.currentTool,pathId])
 
   const [newNode, setNewnode] = useState<typeNode>(pathList[pathid].nodes[nodeid]);
   const [lastNode, setLastnode] = useState<typeNode>(pathList[pathid].nodes[nodeid]);
-
-
+  const [pos, setPos] = useState({posX : -1 ,posY : -1});
+  const [dragPath, setDragPath] = useState<boolean>(false);
   let mouseUpTimeChange:any;
 
   const handleMouseDown = (event: any) => {
@@ -78,6 +77,13 @@ const EditorContainer: React.FC<Props> = (props) =>  {
           ...node1
         });
       }
+      break;
+      case 'mouse_drag_path':
+        setDragPath(true);
+        setPos({
+          posX: x,
+          posY: y
+        })
       break;
       case 'pen'://钢笔工具 按下的时候确定一个锚点的posx posy
         if(!editing.current){
@@ -140,9 +146,24 @@ const EditorContainer: React.FC<Props> = (props) =>  {
             });
             break;
           }
+
       }
     
       break;
+      case 'mouse_drag_path':
+        if(!dragPath){
+          return;
+        }
+        const moveX=x-pos.posX;
+        const moveY=y-pos.posY;
+          UIStore.movePath(props.currentPathid , moveX , moveY)
+          setPos({
+            posX: x,
+            posY: y
+          })
+
+
+        break;
       case 'pen'://钢笔工具 如果在编辑模式 移动鼠标的时候不断变化控制点
         if(editing.current){
           setNewnode(
@@ -167,6 +188,10 @@ const EditorContainer: React.FC<Props> = (props) =>  {
             case 'mouse_drag_node':
               UIStore.setMouseState(nodeTypes.AnchorPoint, false, pathid, nodeid);
             break;
+            case 'mouse_drag_path':
+              setDragPath(false);
+
+              break;
             case 'pen':{//松开鼠标确定一个点 加入path里
               if (!editing.current){
                 return;
@@ -192,7 +217,6 @@ const EditorContainer: React.FC<Props> = (props) =>  {
                   ...newNode
                 })
               }
-              console.log((UIStore.pathList))
             }
             break;
           } 

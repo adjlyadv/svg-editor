@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { nodeTypes } from '../elements/constants';
 
+
 export interface Node {
   posX: number,
   posY: number,
@@ -127,6 +128,21 @@ class UIstore {
     this.mouseState.type = type;
     this.mouseState.drugging = dragging;
   }
+
+  movePath = (pathid: number , moveX: number , moveY: number) => {
+    for( let it of this.pathList[pathid].nodes){
+      it.posX += moveX;
+      it.posY += moveY;
+      it.ctrPosX += moveX;
+      it.ctrPosY += moveY;
+      if(it.ctr2PosY && it.ctr2PosX){
+        it.ctr2PosX += moveX;
+        it.ctr2PosY += moveY;
+
+      }
+
+    }
+}
 
   setStateInfo = (pathId: number, name:string, value:string) => {
     switch(name){

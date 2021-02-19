@@ -10,7 +10,6 @@ interface Props{
 const ToolbarContainer:  React.FC<Props> = (props) => {
 
     function handleClick(e:any){
-        console.log(e.target.id)
         props.set(e.target.id)
     }
 
