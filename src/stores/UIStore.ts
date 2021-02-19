@@ -1,4 +1,3 @@
-import { add } from 'lodash';
 import { makeAutoObservable, toJS} from 'mobx';
 import { nodeTypes } from '../elements/constants';
 import { myIndexDB } from './myIndexDb';
@@ -37,38 +36,7 @@ class UIstore {
   pathList: Path[] = [];
   
   constructor() {
-    makeAutoObservable(this);
-/*this.pathList.push(
-      {
-        id: 0,
-        nodes: [
-          {
-            posX: 125.5,
-            posY: 171.5,
-            ctrPosX: 194.5,
-            ctrPosY: 85.5
-          },
-          {
-            posX: 246.5,
-            posY: 140.5,
-            ctrPosX: 288.5,
-            ctrPosY: 95.5,
-            ctr2PosX: 204.5,
-            ctr2PosY: 185.5
-          },
-          {
-            posX: 210,
-            posY: 261,
-            ctrPosX: 309.5,
-            ctrPosY: 309.5,
-          }
-        ],
-        strokeWidth: 5,
-        stroke: "#000000",
-        fill: "#ffffff"
-      }
-    )*/
- 
+    makeAutoObservable(this); 
   }
 
   initPathList = (id:number,path:Path) =>{
@@ -90,7 +58,7 @@ class UIstore {
 
   deletePath = (pathId: number) => {
     delete this.pathList[pathId]
-    //delete
+    myIndexDB.remove(pathId);
   }
 
   setNodes = (pathId: number, nodeId: number, node: Node) => {

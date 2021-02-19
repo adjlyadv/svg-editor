@@ -28,18 +28,12 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     const initPathList = async() =>{
       await myIndexDB.openDB().then(()=>{return myIndexDB.readAll()}).then(
         ()=>{
-          setNode({
-            posX: -1,
-            posY: -1,
-            ctrPosX: -1,
-            ctrPosY: -1,
-          });
+          setNode({ posX: -1, posY: -1, ctrPosX: -1, ctrPosY: -1});
           console.log('更新成功');
         }
       )
     }
     initPathList();
-    
   }, [])
 
   const edtiorRef = useRef<SVGSVGElement>(null);
@@ -48,16 +42,11 @@ const EditorContainer: React.FC<Props> = (props) =>  {
   const [editorInfo, setEditorInfo] = useState(UIStore.editorInfo);
   const [startNode, setStartNode] = useState<Boolean>(false);
   const pathList = UIStore.pathList;
-  let pathid = UIStore.mouseState.pathid;//鼠标点击的路径
-  let nodeid = UIStore.mouseState.nodeid;//鼠标点击的点
+  let pathid = UIStore.mouseState.pathid;
+  let nodeid = UIStore.mouseState.nodeid;
 
  
-  const [node, setNode] = useState<typeNode>({
-    posX: -1,
-    posY: -1,
-    ctrPosX: -1,
-    ctrPosY: -1,
-  });
+  const [node, setNode] = useState<typeNode>({posX: -1, posY: -1, ctrPosX: -1, ctrPosY: -1 });
   
   useEffect(() => {
     UIStore.setNodes(UIStore.mouseState.pathid, UIStore.mouseState.nodeid, node);
@@ -78,27 +67,16 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     }
   }, [props.currentTool,pathId])
 
-  const [newNode, setNewnode] = useState<typeNode>({
-    posX: -1,
-    posY: -1,
-    ctrPosX: -1,
-    ctrPosY: -1,
-  });//增加时的新点（只是点击了，但是还没有松开 ）
-  const [lastNode, setLastnode] = useState<typeNode>({
-    posX: -1,
-    posY: -1,
-    ctrPosX: -1,
-    ctrPosY: -1,
-  });//上一个点（已经增加到路径里面）
-
+  const [newNode, setNewnode] = useState<typeNode>({posX: -1, posY: -1, ctrPosX: -1, ctrPosY: -1 });
+  const [lastNode, setLastnode] = useState<typeNode>({posX: -1, posY: -1, ctrPosX: -1, ctrPosY: -1 });
 
   let mouseUpTimeChange:any;
 
-  const handleMouseDown = (event: any) => {//鼠标按下
+  const handleMouseDown = (event: any) => {
     event.stopPropagation();
     const { x, y } = getRelativePositon(event);
     switch(props.currentTool){
-      case 'mouse':{
+      case 'mouse':
         pathid = UIStore.mouseState.pathid;
         nodeid = UIStore.mouseState.nodeid;
         if(pathid!==-1 && nodeid!== -1){
@@ -106,8 +84,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
           setNode({
             ...node1
           });
-        }
-      }
+       }
       break;
       case 'pen'://钢笔工具 按下的时候确定一个锚点的posx posy
         if(!editing.current){
@@ -135,7 +112,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
   }
     
 
-  const handleMouseMove = _.throttle((event: any) => {//鼠标移动
+  const handleMouseMove = _.throttle((event: any) => {
     event.stopPropagation();
     const { x, y } = getRelativePositon(event);
     switch(props.currentTool){
@@ -188,7 +165,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
   }, 5, { 'trailing': true })
  
 
-  const handleMouseUp = (event: any) => {//鼠标松开
+  const handleMouseUp = (event: any) => {
     event.stopPropagation();
     clearTimeout(mouseUpTimeChange);
     mouseUpTimeChange = setTimeout(
@@ -230,13 +207,13 @@ const EditorContainer: React.FC<Props> = (props) =>  {
         },250)
   }
 
-  const pathDoubleClick:any = () => {//双击鼠标
+  const pathDoubleClick:any = () => {
     clearTimeout(mouseUpTimeChange);
     editing.current=false;
     setPathId(-1);
   }
 
-  const addNodes:any = () =>{ //增加锚点的时候
+  const addNodes:any = () =>{
     if(editing.current){
         const mockCtrX = lastNode.posX * 2 - lastNode.ctrPosX;
         const mockCtrY = lastNode.posY * 2 - lastNode.ctrPosY;

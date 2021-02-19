@@ -44,21 +44,17 @@ class IndexDB{
     add  = (path:any) => {
         if(this.db){
             let request = this.db.transaction([this.tableName], 'readwrite')
-        .objectStore(this.tableName)
-        .add(path);
-  
-        request.onsuccess = function (event:any) {
-        console.log('数据写入成功');
-        };
+            .objectStore(this.tableName)
+            .add(path);
+            request.onsuccess = function (event:any) {
+                console.log('数据写入成功');
+            };
     
-        request.onerror = function (event:any) {
-        console.log('数据写入失败');
-        }
-        }
-        
+            request.onerror = function (event:any) {
+                console.log('数据写入失败');
+            }
+        } 
     }
-
-
     //读取所有数据
     readAll = () => {
             return new Promise((resolve,reject)=>{
@@ -88,17 +84,26 @@ class IndexDB{
             .objectStore(this.tableName)
             .put(newPath);
 
-        request.onsuccess = function (event:any) {
-            console.log('数据更新成功');
-        };
+            request.onsuccess = function (event:any) {
+                console.log('数据更新成功');
+            };
 
-        request.onerror = function (event:any) {
-            console.log('数据更新失败');
+            request.onerror = function (event:any) {
+                console.log('数据更新失败');
+            }
         }
-        }
-
     }
-
+    //删除数据
+    remove = (id:number) => {
+        if(this.db){
+            let request = this.db.transaction([this.tableName], 'readwrite')
+            .objectStore(this.tableName)
+            .delete(id);
+          request.onsuccess = function (event) {
+            console.log('数据删除成功');
+          };
+        }
+    }
 
 }
 export const myIndexDB = new IndexDB();
