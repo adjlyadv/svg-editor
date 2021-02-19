@@ -20,7 +20,7 @@ const ToolbarContainer:  React.FC<Props> = (props) => {
   return (
     <div className="toolbar">
         <div className="toolitem" onClick={handleClick} >
-            <img className={props.currentTool==="mouse"?"itmeIconselect":"itmeIcon"} id="mouse"  alt="mouse" src={mouse}/>
+            <img className={props.currentTool.indexOf("mouse")!==-1?"itmeIconselect":"itmeIcon"} id="mouse"  alt="mouse" src={mouse}/>
         </div>
         <div className="toolitem" onClick={handleClick}>
             <img className={props.currentTool==="circle"?"itmeIconselect":"itmeIcon"} id="circle" alt="circle" src={circle}/>

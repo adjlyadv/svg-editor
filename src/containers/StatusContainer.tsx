@@ -27,11 +27,11 @@ const StatusContainer: React.FC<Props> = observer((props: Props) => {
           <h4>状态栏</h4>
           <label className = "statusinput">
             <span>PositionX:</span>
-            <input type="number"  name="X"  onChange={inputChange}/>
+            <input type="number"  name="X" value = {pathInfo?.nodes[0].posX} onChange={inputChange}/>
           </label>
           <label className = "statusinput">
             <span>PositionY:</span>
-            <input type="number" name="Y"  onChange = {inputChange}/>
+            <input type="number" name="Y"  value = {pathInfo?.nodes[0].posY} onChange = {inputChange}/>
           </label>
           <label className = "statusinput">
             <span>fill:</span>

@@ -57,7 +57,7 @@ class UIstore {
   }
 
   deletePath = (pathId: number) => {
-    delete this.pathList[pathId]
+    this.pathList = this.pathList.splice(pathId,1);
     myIndexDB.remove(pathId);
   }
 
@@ -112,17 +112,31 @@ class UIstore {
     this.mouseState.drugging = dragging;
   }
 
+  movePath = (pathid: number , moveX: number , moveY: number) => {
+    for( let it of this.pathList[pathid].nodes){
+      it.posX += moveX;
+      it.posY += moveY;
+      it.ctrPosX += moveX;
+      it.ctrPosY += moveY;
+      if(it.ctr2PosY && it.ctr2PosX){
+        it.ctr2PosX += moveX;
+        it.ctr2PosY += moveY;
+      }
+    }
+    let path = toJS(this.pathList[pathid]);
+    myIndexDB.update(path);
+  }
+
+
   setStateInfo = (pathId: number, name:string, value:string) => {
     switch(name){
       case 'X':
-        let node1 = this.pathList[0].nodes[0];
-        node1.posX = Number(value);
-        this.setNodes(0, 0,node1);
+        let oldX = this.pathList[pathId].nodes[0].posX;
+        this.movePath(pathId, Number(value) - oldX, 0);
         break;
       case 'Y':
-        let node2 = this.pathList[0].nodes[0];
-        node2.posY = Number(value)
-        this.setNodes(0, 0,node2);
+        let oldY = this.pathList[pathId].nodes[0].posY;
+        this.movePath(pathId,0, Number(value) - oldY);
         break;
       case 'fill':
         this.pathList[pathId].fill = value;
