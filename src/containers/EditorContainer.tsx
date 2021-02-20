@@ -1,4 +1,5 @@
 import React, { Fragment,useEffect, useRef , useState} from 'react';
+import {myIndexDB} from '../stores/myIndexDb';
 import { Node as typeNode, UIStore } from '../stores/UIStore';
 import Path from '../elements/path';
 import { nodeTypes } from '../elements/constants';
@@ -24,6 +25,15 @@ const EditorContainer: React.FC<Props> = (props) =>  {
       UIStore.editorInfo.left = editorInfo.left;
       setEditorInfo(editorInfo);
     }
+    const initPathList = async() =>{
+      await myIndexDB.openDB().then(()=>{return myIndexDB.readAll()}).then(
+        ()=>{
+          setNode({ posX: -1, posY: -1, ctrPosX: -1, ctrPosY: -1});
+          console.log('更新成功');
+        }
+      )
+    }
+    initPathList();
   }, [])
 
   const edtiorRef = useRef<SVGSVGElement>(null);
@@ -36,7 +46,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
   let nodeid = UIStore.mouseState.nodeid;
 
  
-  const [node, setNode] = useState<typeNode>(pathList[UIStore.mouseState.pathid].nodes[UIStore.mouseState.nodeid]);
+  const [node, setNode] = useState<typeNode>({posX: -1, posY: -1, ctrPosX: -1, ctrPosY: -1 });
   
   useEffect(() => {
     UIStore.setNodes(UIStore.mouseState.pathid, UIStore.mouseState.nodeid, node);
@@ -54,13 +64,12 @@ const EditorContainer: React.FC<Props> = (props) =>  {
         editing.current=false;
         setPathId(-1);
       }
-
-
     }
   }, [props.currentTool,pathId])
 
-  const [newNode, setNewnode] = useState<typeNode>(pathList[pathid].nodes[nodeid]);
-  const [lastNode, setLastnode] = useState<typeNode>(pathList[pathid].nodes[nodeid]);
+  const [newNode, setNewnode] = useState<typeNode>({posX: -1, posY: -1, ctrPosX: -1, ctrPosY: -1 });
+  const [lastNode, setLastnode] = useState<typeNode>({posX: -1, posY: -1, ctrPosX: -1, ctrPosY: -1 });
+
   const [pos, setPos] = useState({posX : -1 ,posY : -1});
   const [dragPath, setDragPath] = useState<boolean>(false);
   let mouseUpTimeChange:any;
@@ -69,21 +78,24 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     event.stopPropagation();
     const { x, y } = getRelativePositon(event);
     switch(props.currentTool){
-      case 'mouse_drag_node':{
+      case 'mouse_drag_node':
         pathid = UIStore.mouseState.pathid;
-        nodeid = UIStore.mouseState.nodeid
-        let node1 = UIStore.pathList[pathid].nodes[nodeid];
-        setNode({
-          ...node1
-        });
-      }
+        nodeid = UIStore.mouseState.nodeid;
+        if(pathid!==-1 && nodeid!== -1){
+          let node1 = UIStore.pathList[pathid].nodes[nodeid];
+          setNode({
+            ...node1
+          });
+       }
       break;
       case 'mouse_drag_path':
-        setDragPath(true);
-        setPos({
-          posX: x,
-          posY: y
-        })
+        if(props.currentPathid !== -1){
+          setDragPath(true);
+          setPos({
+            posX: x,
+            posY: y
+          })
+        }
       break;
       case 'pen'://钢笔工具 按下的时候确定一个锚点的posx posy
         if(!editing.current){
@@ -148,7 +160,6 @@ const EditorContainer: React.FC<Props> = (props) =>  {
           }
 
       }
-    
       break;
       case 'mouse_drag_path':
         if(!dragPath){
@@ -161,9 +172,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
             posX: x,
             posY: y
           })
-
-
-        break;
+      break;
       case 'pen'://钢笔工具 如果在编辑模式 移动鼠标的时候不断变化控制点
         if(editing.current){
           setNewnode(
@@ -187,10 +196,9 @@ const EditorContainer: React.FC<Props> = (props) =>  {
           switch(props.currentTool){
             case 'mouse_drag_node':
               UIStore.setMouseState(nodeTypes.AnchorPoint, false, pathid, nodeid);
-            break;
+              break;
             case 'mouse_drag_path':
               setDragPath(false);
-
               break;
             case 'pen':{//松开鼠标确定一个点 加入path里
               if (!editing.current){
@@ -230,7 +238,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     setPathId(-1);
   }
 
-  const addNodes:any = () =>{ 
+  const addNodes:any = () =>{
     if(editing.current){
         const mockCtrX = lastNode.posX * 2 - lastNode.ctrPosX;
         const mockCtrY = lastNode.posY * 2 - lastNode.ctrPosY;
@@ -259,7 +267,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     <div className="editor-container">
       <svg ref={edtiorRef} className="editor-svg" width={editorInfo.width} height={editorInfo.height}
            onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}
-           onDoubleClick={pathDoubleClick}>
+          onDoubleClick={pathDoubleClick}>
         {pathList.map(path => (
           <Path key={path.id} path={path} setPathid={props.set} currentTool={props.currentTool}/>
         ))}
