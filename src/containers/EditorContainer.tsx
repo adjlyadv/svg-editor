@@ -72,7 +72,6 @@ const EditorContainer: React.FC<Props> = (props) =>  {
 
   const [pos, setPos] = useState({posX : -1 ,posY : -1});
   const [dragPath, setDragPath] = useState<boolean>(false);
-
   let mouseUpTimeChange:any;
 
   const handleMouseDown = (event: any) => {
@@ -159,6 +158,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
             });
             break;
           }
+
       }
       break;
       case 'mouse_drag_path':
@@ -196,9 +196,10 @@ const EditorContainer: React.FC<Props> = (props) =>  {
           switch(props.currentTool){
             case 'mouse_drag_node':
               UIStore.setMouseState(nodeTypes.AnchorPoint, false, pathid, nodeid);
-              break;
+            break;
             case 'mouse_drag_path':
               setDragPath(false);
+
               break;
             case 'pen':{//松开鼠标确定一个点 加入path里
               if (!editing.current){

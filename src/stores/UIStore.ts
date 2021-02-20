@@ -1,7 +1,9 @@
 import { makeAutoObservable, toJS} from 'mobx';
 import { nodeTypes } from '../elements/constants';
 import { myIndexDB } from './myIndexDb';
-export interface Node{
+
+
+export interface Node {
   posX: number,
   posY: number,
   ctrPosX: number,

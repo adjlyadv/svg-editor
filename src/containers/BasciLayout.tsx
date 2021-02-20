@@ -21,7 +21,10 @@ const BasicLayout = () => {
               :<FunctionContainer currentTool={currentTool} set={setCurrenttool}/>
       }
       <EditorContainer currentTool={currentTool} currentPathid={currentPathid} set={setCurrentPathid} />
+
+
       <StatusContainer currentPathid={currentPathid}/>
+
     </div>
   )
 }
