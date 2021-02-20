@@ -196,10 +196,9 @@ const EditorContainer: React.FC<Props> = (props) =>  {
           switch(props.currentTool){
             case 'mouse_drag_node':
               UIStore.setMouseState(nodeTypes.AnchorPoint, false, pathid, nodeid);
-            break;
+              break;
             case 'mouse_drag_path':
               setDragPath(false);
-
               break;
             case 'pen':{//松开鼠标确定一个点 加入path里
               if (!editing.current){
