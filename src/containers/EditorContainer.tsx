@@ -236,6 +236,16 @@ const EditorContainer: React.FC<Props> = (props) =>  {
 
   const pathDoubleClick:any = () => {
     clearTimeout(mouseUpTimeChange);
+    switch(props.currentTool){
+      case 'pen':
+        if (!editing.current || pathId === -1){
+          return;
+        }
+        let _pathId = pathId;
+        const nodesLength = UIStore.pathList[_pathId].nodes.length;
+        UIStore.addNodes(_pathId,newNode.posX,newNode.posY,newNode.ctrPosX,newNode.ctrPosY,newNode.ctrPosX,newNode.ctrPosY,nodesLength,true);
+
+    }
     editing.current=false;
     setPathId(-1);
   }

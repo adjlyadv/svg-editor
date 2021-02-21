@@ -53,7 +53,7 @@ class IndexDB{
             };
     
             request.onerror = function (event:any) {
-                console.log('数据写入失败');
+                console.log('数据写入失败'+event);
             }
         } 
     }

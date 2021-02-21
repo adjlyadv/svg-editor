@@ -69,10 +69,10 @@ class UIstore {
     
   }
 
-  addNodes =(pathId: number , posX: number, posY: number, ctrPosX?: number, ctrPosY?: number, ctr2PosX?: number, ctr2PoxY?: number, index?: number) => {
+  addNodes =(pathId: number , posX: number, posY: number, ctrPosX?: number, ctrPosY?: number, ctr2PosX?: number, ctr2PoxY?: number, index?: number,over?:boolean) => {
 
     const nodesLength = this.pathList[pathId].nodes.length;
-    if(nodesLength === 0){
+    if(nodesLength === 0 || over){
       this.pathList[pathId].nodes.push(
         {
           posX: posX,
@@ -81,8 +81,12 @@ class UIstore {
           ctrPosY: ctrPosY || posY
         }
       )
-      myIndexDB.add(this.pathList[pathId]);
-
+      if(nodesLength === 0){
+        myIndexDB.add(this.pathList[pathId]);
+      }else{
+        myIndexDB.update(this.pathList[pathId]);
+      }
+      
     }
     else{
       this.pathList[pathId].nodes = [
