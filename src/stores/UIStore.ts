@@ -1,4 +1,4 @@
-import { makeAutoObservable, toJS} from 'mobx';
+import { makeAutoObservable} from 'mobx';
 import { nodeTypes } from '../elements/constants';
 import { myIndexDB } from './myIndexDb';
 export interface Node{
@@ -64,8 +64,7 @@ class UIstore {
   setNodes = (pathId: number, nodeId: number, node: Node) => {
     if(this.pathList[pathId]){
       this.pathList[pathId].nodes[nodeId] = node;
-      let path = toJS(this.pathList[pathId]);
-      myIndexDB.update(path);
+      myIndexDB.update(this.pathList[pathId]);
     }
     
   }
@@ -82,8 +81,7 @@ class UIstore {
           ctrPosY: ctrPosY || posY
         }
       )
-      let path = toJS(this.pathList[pathId]);
-      myIndexDB.add(path);
+      myIndexDB.add(this.pathList[pathId]);
 
     }
     else{
@@ -99,8 +97,7 @@ class UIstore {
         },
         ...this.pathList[pathId].nodes.slice(index || nodesLength - 1)
       ]
-      let path = toJS(this.pathList[pathId]);
-      myIndexDB.update(path);
+      myIndexDB.update(this.pathList[pathId]);
     }
 
   }
@@ -123,8 +120,7 @@ class UIstore {
         it.ctr2PosY += moveY;
       }
     }
-    let path = toJS(this.pathList[pathid]);
-    myIndexDB.update(path);
+    myIndexDB.update(this.pathList[pathid]);
   }
 
 
@@ -149,8 +145,7 @@ class UIstore {
         break;
       default:        
     }
-    let path = toJS(this.pathList[pathId]);
-    myIndexDB.update(path);
+    myIndexDB.update(this.pathList[pathId]);
   }
 }
 

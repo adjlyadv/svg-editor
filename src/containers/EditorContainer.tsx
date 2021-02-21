@@ -26,12 +26,14 @@ const EditorContainer: React.FC<Props> = (props) =>  {
       setEditorInfo(editorInfo);
     }
     const initPathList = async() =>{
-      await myIndexDB.openDB().then(()=>{return myIndexDB.readAll()}).then(
-        ()=>{
-          setNode({ posX: -1, posY: -1, ctrPosX: -1, ctrPosY: -1});
-          console.log('更新成功');
-        }
-      )
+      try{
+        await myIndexDB.openDB();
+        await myIndexDB.readAll();
+        setNode({ posX: -1, posY: -1, ctrPosX: -1, ctrPosY: -1});//加载结束后重新渲染页面
+        console.log('加载数据结束');
+      }catch(err){
+        console.log('加载失败');
+      }
     }
     initPathList();
   }, [])

@@ -1,5 +1,6 @@
 import {UIStore} from './UIStore';
-
+import * as _ from 'lodash';
+import {toJS} from 'mobx';
 class IndexDB{
 
     private dbName: string = 'svgData';//数据库名称
@@ -41,8 +42,9 @@ class IndexDB{
         }
     }
     //向indexdb中增加数据
-    add  = (path:any) => {
+    add  = (newPath:any) => {
         if(this.db){
+            let path = toJS(newPath);
             let request = this.db.transaction([this.tableName], 'readwrite')
             .objectStore(this.tableName)
             .add(path);
@@ -78,12 +80,12 @@ class IndexDB{
     }
 
     //更新数据
-    update = (newPath:any)=> {
+    update = _.debounce((newPath:any)=> {
         if(this.db){
+            let path = toJS(newPath);
             let request = this.db.transaction([this.tableName], 'readwrite')
             .objectStore(this.tableName)
-            .put(newPath);
-
+            .put(path);
             request.onsuccess = function (event:any) {
                 console.log('数据更新成功');
             };
@@ -92,7 +94,8 @@ class IndexDB{
                 console.log('数据更新失败');
             }
         }
-    }
+    },1000,{ 'maxWait': 10000 })
+
     //删除数据
     remove = (id:number) => {
         if(this.db){
