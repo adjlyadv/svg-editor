@@ -26,12 +26,14 @@ const EditorContainer: React.FC<Props> = (props) =>  {
       setEditorInfo(editorInfo);
     }
     const initPathList = async() =>{
-      await myIndexDB.openDB().then(()=>{return myIndexDB.readAll()}).then(
-        ()=>{
-          setNode({ posX: -1, posY: -1, ctrPosX: -1, ctrPosY: -1});
-          console.log('更新成功');
-        }
-      )
+      try{
+        await myIndexDB.openDB();
+        await myIndexDB.readAll();
+        setNode({ posX: -1, posY: -1, ctrPosX: -1, ctrPosY: -1});//加载结束后重新渲染页面
+        console.log('加载数据结束');
+      }catch(err){
+        console.log('加载失败');
+      }
     }
     initPathList();
   }, [])
@@ -234,6 +236,16 @@ const EditorContainer: React.FC<Props> = (props) =>  {
 
   const pathDoubleClick:any = () => {
     clearTimeout(mouseUpTimeChange);
+    switch(props.currentTool){
+      case 'pen':
+        if (!editing.current || pathId === -1){
+          return;
+        }
+        let _pathId = pathId;
+        const nodesLength = UIStore.pathList[_pathId].nodes.length;
+        UIStore.addNodes(_pathId,newNode.posX,newNode.posY,newNode.ctrPosX,newNode.ctrPosY,newNode.ctrPosX,newNode.ctrPosY,nodesLength,true);
+
+    }
     editing.current=false;
     setPathId(-1);
   }
