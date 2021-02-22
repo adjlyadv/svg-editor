@@ -4,21 +4,23 @@ import '../style/statusContainer.scss';
 import { UIStore } from '../stores/UIStore';
 
 interface Props{
-  currentPathid:number;
+  
 }
 
 const StatusContainer: React.FC<Props> = observer((props: Props) => {
+
+  const currentPathid = UIStore.editingPathId
   
   const inputChange = (event: any) => {
     let name = event.target.name;
     let value = event.target.value;
-    if(props.currentPathid!== -1){
-      UIStore.setStateInfo(props.currentPathid,name,value);
+    if(currentPathid!== -1){
+      UIStore.setStateInfo(currentPathid,name,value);
     }
   }
   let pathInfo;
-  if(props.currentPathid!== -1){
-     pathInfo = UIStore.pathList[props.currentPathid];
+  if(currentPathid !== -1){
+     pathInfo = UIStore.pathList[currentPathid].nodes.length ? UIStore.pathList[currentPathid]: null;
   }
     
   return (

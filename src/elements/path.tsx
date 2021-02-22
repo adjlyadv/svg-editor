@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import { Node as typeNode, UIStore } from '../stores/UIStore';
-import { getRelativePositon } from '../utils/calculate';
+import { getRelativePositon, getCentralSymmetryPosition } from '../utils/calculate';
 import Node from './node';
 import _ from 'lodash';
 import Bezier from 'bezier-js';
@@ -12,18 +12,19 @@ interface Props{
     nodes: typeNode[],
     strokeWidth: number,
     stroke: string,
-    fill:string
+    fill:string,
+    type: number
   }
-  setPathid:(arg0: number)=>void;
   currentTool:String;
 }
 
 const path: React.FC<Props> = observer((props: Props) => {
     
-    const getD = (nodes: string | any[]) => {
+    const getD = (nodes: string | any[], type: boolean) => {
 
       let d = "";
-      if(nodes.length === 1){//钢笔增加路径的时候对第一个节点的渲染
+      const length = nodes.length;
+      if(length === 1){//钢笔增加路径的时候对第一个节点的渲染
         return d;
       }
       for (let i = 0; i < nodes.length; i++) {
@@ -32,12 +33,16 @@ const path: React.FC<Props> = observer((props: Props) => {
         } else if (i + 1 <= nodes.length - 1) {
           d += `${nodes[i].ctrPosX} ${nodes[i].ctrPosY} ${nodes[i].posX} ${nodes[i].posY} C ${nodes[i].ctr2PosX} ${nodes[i].ctr2PosY} `
         } else {
-          d += `${nodes[i].ctrPosX} ${nodes[i].ctrPosY} ${nodes[i].posX} ${nodes[i].posY}`
+          d += `${nodes[i].ctrPosX} ${nodes[i].ctrPosY} ${nodes[i].posX} ${nodes[i].posY} `
         }
       }
 
-      console.log(d)
-      
+      if (type) {
+        const { ctr2PosX, ctr2PosY } = getCentralSymmetryPosition(nodes[0])
+        d += `C ${nodes[length - 1].ctr2PosX} ${nodes[length - 1].ctr2PosY} 
+          ${nodes[0].ctr2PosX ? nodes[0].ctr2PosX : ctr2PosX} ${nodes[0].ctr2PosY ? nodes[0].ctr2PosY : ctr2PosY} ${nodes[0].posX} ${nodes[0].posY} z`
+      }
+
       return d
     }
     
@@ -47,9 +52,8 @@ const path: React.FC<Props> = observer((props: Props) => {
 
       for (let i = 0; i + 1 < nodes.length; i++) {
 
-        if (i !== 0 && i + 1 !== nodes.length) {
+        if (i !== 0) {
           const node = nodes[i];
-
           mockNode = {
             posX: node.posX,
             posY: node.posY,
@@ -57,29 +61,54 @@ const path: React.FC<Props> = observer((props: Props) => {
             ctrPosY: node.ctr2PosY
           }
         }
+        
+        const _nodes = [
+          mockNode ? mockNode : nodes[i], 
+          nodes[i + 1]
+        ]
 
-        const attrD = getD([mockNode ? mockNode : nodes[i], nodes[i + 1]]);
+        const attrD = getD(_nodes, false);
         paths.push({
           attrD: attrD,
-          nodes: [
-            mockNode ? mockNode : nodes[i], 
-            nodes[i + 1]
-          ],
+          nodes: _nodes
+        });
+      }
+
+      if (props.path.type) { // 判定一下是不是闭合路径，如果是的话需要另外的控制点
+        let node = nodes[nodes.length - 1];
+        const mockEndNode = {
+          posX: node.posX,
+          posY: node.posY,
+          ctrPosX: node.ctr2PosX,
+          ctrPosY: node.ctr2PosY
+        }
+
+        node = nodes[0];
+        const mockStartNode = {
+          posX: node.posX,
+          posY: node.posY,
+          ctrPosX: node.ctr2PosX,
+          ctrPosY: node.ctr2PosY
+        }
+
+        const _nodes = [
+          mockEndNode,
+          mockStartNode
+        ]
+
+        const attrD = getD(_nodes, false);
+        paths.push({
+          attrD: attrD,
+          nodes: _nodes
         });
       }
 
       return paths
     }
-    
-    const handleDoubleClick = (event: any) => {
-      event.stopPropagation();
-      if(props.currentTool.indexOf("mouse") !== -1)
-        setEditing(true);
-    }
 
     const handleClick = (event: any) => {
       event.stopPropagation();
-      props.setPathid(props.path.id);
+      UIStore.setEditingPath(props.path.id);
     }
 
     const handleOnMouseMove = _.throttle((event: any, item: any) => {
@@ -157,7 +186,7 @@ const path: React.FC<Props> = observer((props: Props) => {
         ctrPosY: points[2].y,
         ctr2PosX: UIStore.pathList[id].nodes[index + 1].ctr2PosX || undefined,
         ctr2PosY: UIStore.pathList[id].nodes[index + 1].ctr2PosY || undefined
-      }
+      } 
 
       addingNode.ctr2PosX = points[1].x;
       addingNode.ctr2PosY = points[1].y; // 新的节点信息需要左右两端的
@@ -168,37 +197,38 @@ const path: React.FC<Props> = observer((props: Props) => {
       setNewNode(null);
     }
 
-    const [editing, setEditing] = useState<boolean>(false);
     const [newNode, setNewNode] = useState<any>();
     const [bezier, setBezier] = useState<Bezier>();
     const { id, nodes } = props.path;
 
-    if (!editing) {
+    if (props.currentTool === "mouse_add_node") {
+      const paths = getEditingPath();
+
       return (
         <Fragment>
-          <path onDoubleClick={handleDoubleClick} onClick={handleClick} d={getD(nodes)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke} fill={props.path.fill}/>
+          {
+            paths.map(item => 
+              <Fragment>
+                <path key={item.attrD} onClick={handleClick} d={item.attrD} onMouseOver={e => handleOnMouseMove(e, item)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke}fill={props.path.fill}/>
+              </Fragment>
+            )
+          }
+          {nodes.length && nodes.map((node, index) => 
+            <Node node={node} id={index} pathId={id} />
+          )}
+          {newNode && <Node node={newNode} id={-1} pathId={-1} onClick={handleAddNewNodeClick} onMouseLeave={() => setNewNode(null)} />}
         </Fragment>
-      );
+      )
     }
-
-    const paths = getEditingPath();
 
     return (
       <Fragment>
-        {
-          paths.map(item => 
-            <Fragment>
-              <path key={item.attrD} onClick={handleClick} d={item.attrD} onMouseOver={e => handleOnMouseMove(e, item)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke}fill={props.path.fill}/>
-            </Fragment>
-          )
-        }
-        {nodes.map((node, index) => 
+        <path onClick={handleClick} d={getD(nodes, !!props.path.type)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke} fill={props.path.fill}/>
+        {id === UIStore.editingPathId && nodes.length && nodes.map((node, index) => 
           <Node node={node} id={index} pathId={id} />
         )}
-        {newNode && <Node node={newNode} id={-1} pathId={-1} onClick={handleAddNewNodeClick} onMouseLeave={() => setNewNode(null)} />}
       </Fragment>
     )
-
 
   }
 )
