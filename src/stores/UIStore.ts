@@ -86,7 +86,6 @@ class UIstore {
       }else{
         myIndexDB.update(this.pathList[pathId]);
       }
-      
     }
     else{
       this.pathList[pathId].nodes = [

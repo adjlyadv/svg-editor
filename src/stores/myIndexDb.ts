@@ -42,6 +42,7 @@ class IndexDB{
         }
     }
     //向indexdb中增加数据
+
     add  = (newPath:any) => {
         if(this.db){
             let path = toJS(newPath);
@@ -53,7 +54,7 @@ class IndexDB{
             };
     
             request.onerror = function (event:any) {
-                console.log('数据写入失败'+event);
+                console.log('数据写入失败');
             }
         } 
     }
