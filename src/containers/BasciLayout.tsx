@@ -10,7 +10,6 @@ import '../style/BasicContainer.scss'
 const BasicLayout = () => {
 
   const [currentTool, setCurrenttool] = useState("mouse");
-  const [currentPathid, setCurrentPathid] = useState(-1);
 
   return(
     <div className="basic-container">
@@ -20,10 +19,10 @@ const BasicLayout = () => {
               ?null
               :<FunctionContainer currentTool={currentTool} set={setCurrenttool}/>
       }
-      <EditorContainer currentTool={currentTool} currentPathid={currentPathid} set={setCurrentPathid} />
+      <EditorContainer currentTool={currentTool} />
 
 
-      <StatusContainer currentPathid={currentPathid}/>
+      <StatusContainer />
 
     </div>
   )

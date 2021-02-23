@@ -22,6 +22,8 @@ const Node = observer((props: Props) => {
   const node = UIStore.pathList[props.pathId].nodes[props.id];
 
   const handleMouseDown = (elec:number, event: any) => {
+    UIStore.pathList[props.pathId].type = 1; //设定成闭合
+
     switch(elec) {
       case nodeTypes.AnchorPoint: {
         UIStore.setMouseState(nodeTypes.AnchorPoint, true, props.pathId, props.id);
@@ -38,7 +40,6 @@ const Node = observer((props: Props) => {
         break
       }
     }
-
   }
   
   return(

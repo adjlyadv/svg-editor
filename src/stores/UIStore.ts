@@ -13,6 +13,7 @@ export interface Node{
 export interface Path {
   id: number,
   nodes: Node[],
+  type: number, // 0 非闭合 1 闭合
   strokeWidth: number,
   stroke: string,
   fill:string
@@ -34,6 +35,7 @@ class UIstore {
   }
 
   pathList: Path[] = [];
+  editingPathId = -1;
   
   constructor() {
     makeAutoObservable(this); 
@@ -50,7 +52,8 @@ class UIstore {
           nodes: [],
           strokeWidth: 5,
           stroke: "#000000",
-          fill: "#ffffff"
+          fill: "none",
+          type: 0
         }
     )
     return this.pathList.length - 1;
@@ -59,6 +62,11 @@ class UIstore {
   deletePath = (pathId: number) => {
     this.pathList = this.pathList.splice(pathId,1);
     myIndexDB.remove(pathId);
+  }
+
+  setEditingPath = (pathId: number) => {
+    this.editingPathId = pathId;
+    myIndexDB.update(this.pathList[pathId]);
   }
 
   setNodes = (pathId: number, nodeId: number, node: Node) => {

@@ -3,14 +3,12 @@ import {myIndexDB} from '../stores/myIndexDb';
 import { Node as typeNode, UIStore } from '../stores/UIStore';
 import Path from '../elements/path';
 import { nodeTypes } from '../elements/constants';
-import { getRelativePositon } from '../utils/calculate';
+import { getRelativePositon, getCentralSymmetryPosition } from '../utils/calculate';
 import * as _ from 'lodash';
 import '../style/EditorContainer.scss';
 
 interface Props{
   currentTool:string;
-  currentPathid:number;
-  set:(arg0: number)=>void;
 }
 
 const EditorContainer: React.FC<Props> = (props) =>  {
@@ -91,7 +89,8 @@ const EditorContainer: React.FC<Props> = (props) =>  {
        }
       break;
       case 'mouse_drag_path':
-        if(props.currentPathid !== -1){
+        const currentPathid = UIStore.editingPathId;
+        if(currentPathid !== -1){
           setDragPath(true);
           setPos({
             posX: x,
@@ -169,7 +168,8 @@ const EditorContainer: React.FC<Props> = (props) =>  {
         }
         const moveX=x-pos.posX;
         const moveY=y-pos.posY;
-          UIStore.movePath(props.currentPathid , moveX , moveY)
+        const currentPathid = UIStore.editingPathId;
+          UIStore.movePath(currentPathid , moveX , moveY)
           setPos({
             posX: x,
             posY: y
@@ -211,15 +211,28 @@ const EditorContainer: React.FC<Props> = (props) =>  {
                 _pathId = UIStore.addPath()
                 setPathId(_pathId);
               }
+
+              UIStore.setEditingPath(_pathId);
+
+              if (UIStore.pathList[_pathId].type) {
+                // 需要创建闭合路径了，退出编辑模式
+                const _node = UIStore.pathList[_pathId].nodes[0];
+                const { ctr2PosX, ctr2PosY } = getCentralSymmetryPosition(_node);
+                UIStore.pathList[_pathId].nodes[0].ctr2PosX = ctr2PosX;
+                UIStore.pathList[_pathId].nodes[0].ctr2PosY = ctr2PosY;
+                editing.current = false;
+                setPathId(-1);
+                return
+              }
+
               const nodesLength = UIStore.pathList[_pathId].nodes.length;
-              const mockCtrX = newNode.posX * 2 - newNode.ctrPosX;
-              const mockCtrY = newNode.posY * 2 - newNode.ctrPosY;
-              UIStore.addNodes(_pathId,newNode.posX,newNode.posY,newNode.ctrPosX,newNode.ctrPosY,mockCtrX,mockCtrY,nodesLength);
+              const { ctr2PosX, ctr2PosY } = getCentralSymmetryPosition(newNode);
+              UIStore.addNodes(_pathId,newNode.posX,newNode.posY,newNode.ctrPosX,newNode.ctrPosY,ctr2PosX,ctr2PosY,nodesLength);
               if(startNode){// 处理第一个节点的渲染
                 setLastnode({
                   ...newNode,
-                  ctrPosX: mockCtrX,
-                  ctrPosY: mockCtrY
+                  ctrPosX: ctr2PosX,
+                  ctrPosY: ctr2PosY
                 })
                 setStartNode(false);
               }else{
@@ -231,7 +244,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
             break;
           } 
 
-        },250)
+        },50)
   }
 
   const pathDoubleClick:any = () => {
@@ -252,9 +265,8 @@ const EditorContainer: React.FC<Props> = (props) =>  {
 
   const addNodes:any = () =>{
     if(editing.current){
-        const mockCtrX = lastNode.posX * 2 - lastNode.ctrPosX;
-        const mockCtrY = lastNode.posY * 2 - lastNode.ctrPosY;
-        let getD = `M ${lastNode.posX} ${lastNode.posY} C ${mockCtrX} ${mockCtrY} ${newNode.ctrPosX} ${newNode.ctrPosY}`;
+      const { ctr2PosX, ctr2PosY } = getCentralSymmetryPosition(lastNode);
+        let getD = `M ${lastNode.posX} ${lastNode.posY} C ${ctr2PosX} ${ctr2PosY} ${newNode.ctrPosX} ${newNode.ctrPosY}`;
         let width = 0;
 
         if(lastNode.posX !== newNode.posX && lastNode.posY !== newNode.posY){
@@ -269,7 +281,6 @@ const EditorContainer: React.FC<Props> = (props) =>  {
             <path d = {getD}  fill="none" stroke="#000" strokeWidth="1"/>
             <circle className="point-control" cx={newNode.posX} cy={newNode.posY} stroke="#55f" r="10" />
             <line x1={newNode.posX} y1={newNode.posY} x2={newNode.ctrPosX} y2={newNode.ctrPosY} stroke="#555" strokeWidth={width} />
-            <circle className="point-control" cx={newNode.ctrPosX} cy={newNode.ctrPosY} stroke="#000" r="10" />
           </Fragment>  
         )
     }
@@ -280,10 +291,11 @@ const EditorContainer: React.FC<Props> = (props) =>  {
       <svg ref={edtiorRef} className="editor-svg" width={editorInfo.width} height={editorInfo.height}
            onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}
           onDoubleClick={pathDoubleClick}>
-        {pathList.map(path => (
-          <Path key={path.id} path={path} setPathid={props.set} currentTool={props.currentTool}/>
-        ))}
         {addNodes()}
+        {pathList.map(path => (
+          <Path key={path.id} path={path} currentTool={props.currentTool}/>
+        ))}
+
       </svg>
     </div>
   )
