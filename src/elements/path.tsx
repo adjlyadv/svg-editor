@@ -113,7 +113,7 @@ const path: React.FC<Props> = observer((props: Props) => {
 
     const handleOnMouseMove = _.throttle((event: any, item: any) => {
       event.stopPropagation();
-      if(props.currentTool !== "mouse_add_node"){
+      if(props.currentTool !== "pen_add_node"){
         return
       }
       const { x, y } = getRelativePositon(event);
@@ -143,7 +143,7 @@ const path: React.FC<Props> = observer((props: Props) => {
     }, 50);
 
     const handleAddNewNodeClick = () => {
-      if(props.currentTool !== "mouse_add_node"){
+      if(props.currentTool !== "pen_add_node"){
         return
       }
       const newPath = bezier?.split(newNode.t); // 这里贝塞尔曲线被分成了两个部分，需要分别更新左右两端
