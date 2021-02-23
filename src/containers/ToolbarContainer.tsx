@@ -32,7 +32,7 @@ const ToolbarContainer:  React.FC<Props> = (props) => {
             <img className={props.currentTool==="line"?"itmeIconselect":"itmeIcon"} id="line" alt="line" src={line}/>
         </div>
         <div className="toolitem" onClick={handleClick}>
-            <img className={props.currentTool==="pen"?"itmeIconselect":"itmeIcon"} id="pen" alt="pen" src={pen}/>
+            <img className={props.currentTool.indexOf("pen")!==-1?"itmeIconselect":"itmeIcon"} id="pen" alt="pen" src={pen}/>
         </div>
     </div>
   )

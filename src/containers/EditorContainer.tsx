@@ -55,7 +55,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
   }, [node])
 
   useEffect(() => {
-    if (props.currentTool !== "pen"){
+    if (props.currentTool !== "pen_new_path"){
       const _pathid=pathId;
       if (_pathid !== -1 && UIStore.pathList[_pathid].nodes.length < 2){
         UIStore.deletePath(_pathid);
@@ -80,7 +80,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     event.stopPropagation();
     const { x, y } = getRelativePositon(event);
     switch(props.currentTool){
-      case 'mouse_drag_node':
+      case 'pen_drag_node':
         pathid = UIStore.mouseState.pathid;
         nodeid = UIStore.mouseState.nodeid;
         if(pathid!==-1 && nodeid!== -1){
@@ -99,7 +99,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
           })
         }
       break;
-      case 'pen'://钢笔工具 按下的时候确定一个锚点的posx posy
+      case 'pen_new_path'://钢笔工具 按下的时候确定一个锚点的posx posy
         if(!editing.current){
           editing.current=true;
           setStartNode(true);
@@ -129,7 +129,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     event.stopPropagation();
     const { x, y } = getRelativePositon(event);
     switch(props.currentTool){
-      case 'mouse_drag_node':
+      case 'pen_drag_node':
         if(!UIStore.mouseState.drugging){
           return
         }
@@ -175,7 +175,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
             posY: y
           })
       break;
-      case 'pen'://钢笔工具 如果在编辑模式 移动鼠标的时候不断变化控制点
+      case 'pen_new_path'://钢笔工具 如果在编辑模式 移动鼠标的时候不断变化控制点
         if(editing.current){
           setNewnode(
             {
@@ -196,13 +196,13 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     mouseUpTimeChange = setTimeout(
         () => {
           switch(props.currentTool){
-            case 'mouse_drag_node':
+            case 'pen_drag_node':
               UIStore.setMouseState(nodeTypes.AnchorPoint, false, pathid, nodeid);
               break;
             case 'mouse_drag_path':
               setDragPath(false);
               break;
-            case 'pen':{//松开鼠标确定一个点 加入path里
+            case 'pen_new_path':{//松开鼠标确定一个点 加入path里
               if (!editing.current){
                 return;
               }
@@ -237,7 +237,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
   const pathDoubleClick:any = () => {
     clearTimeout(mouseUpTimeChange);
     switch(props.currentTool){
-      case 'pen':
+      case 'pen_new_path':
         if (!editing.current || pathId === -1){
           return;
         }

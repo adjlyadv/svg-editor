@@ -16,9 +16,14 @@ const BasicLayout = () => {
     <div className="basic-container">
       <ToolbarContainer currentTool={currentTool} set={setCurrenttool}/>
       {
-          currentTool.indexOf("mouse")===-1
-              ?null
-              :<FunctionContainer currentTool={currentTool} set={setCurrenttool}/>
+        currentTool.indexOf("mouse")===-1
+          ? null
+          : <FunctionContainer currentTool={currentTool} set={setCurrenttool} id="mouse"/>
+      }
+      {
+        currentTool.indexOf("pen")===-1
+          ? null
+          : <FunctionContainer currentTool={currentTool} set={setCurrenttool} id="pen"/>
       }
       <EditorContainer currentTool={currentTool} currentPathid={currentPathid} set={setCurrentPathid} />
 
