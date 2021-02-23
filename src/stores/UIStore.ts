@@ -45,7 +45,7 @@ class UIstore {
     this.pathList[id] = path;
   }
 
-  addPath = () => {
+  addPath = (type?:number) => {
     this.pathList.push(
         {
           id: this.pathList.length,
@@ -53,7 +53,7 @@ class UIstore {
           strokeWidth: 5,
           stroke: "#000000",
           fill: "none",
-          type: 0
+          type: type || 0
         }
     )
     return this.pathList.length - 1;
@@ -108,6 +108,7 @@ class UIstore {
         },
         ...this.pathList[pathId].nodes.slice(index || nodesLength - 1)
       ]
+      console.log(ctr2PosX)
       myIndexDB.update(this.pathList[pathId]);
     }
 
