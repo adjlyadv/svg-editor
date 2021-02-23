@@ -244,7 +244,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
             break;
           } 
 
-        },50)
+        },250)
   }
 
   const pathDoubleClick:any = () => {

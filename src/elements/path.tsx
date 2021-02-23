@@ -201,7 +201,7 @@ const path: React.FC<Props> = observer((props: Props) => {
     const [bezier, setBezier] = useState<Bezier>();
     const { id, nodes } = props.path;
 
-    if (props.currentTool === "mouse_add_node") {
+    if (props.currentTool === "pen_add_node") {
       const paths = getEditingPath();
 
       return (
