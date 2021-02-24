@@ -3,7 +3,7 @@ import {myIndexDB} from '../stores/myIndexDb';
 import { Node as typeNode, UIStore } from '../stores/UIStore';
 import Path from '../elements/path';
 import { nodeTypes } from '../elements/constants';
-import { getRelativePositon, getCentralSymmetryPosition } from '../utils/calculate';
+import { getRelativePositon, getCentralSymmetryPosition ,getCircleNodes,getRectNodes} from '../utils/calculate';
 import * as _ from 'lodash';
 import '../style/EditorContainer.scss';
 
@@ -67,6 +67,9 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     }
   }, [props.currentTool,pathId])
 
+  const [toolNode, setToolNode] = useState<boolean>(false);
+  const [newToolNode, setNewToolNode] = useState<typeNode>({posX: -1, posY: -1, ctrPosX: -1, ctrPosY: -1 }); 
+  
   const [newNode, setNewnode] = useState<typeNode>({posX: -1, posY: -1, ctrPosX: -1, ctrPosY: -1 });
   const [lastNode, setLastnode] = useState<typeNode>({posX: -1, posY: -1, ctrPosX: -1, ctrPosY: -1 });
 
@@ -97,6 +100,16 @@ const EditorContainer: React.FC<Props> = (props) =>  {
             posY: y
           })
         }
+      break;
+      case 'rectangle':
+      case 'circle':
+        setToolNode(true);
+        setNewToolNode({
+          posX:x,
+          posY:y,
+          ctrPosX:x,
+          ctrPosY:y
+        })
       break;
       case 'pen_new_path'://钢笔工具 按下的时候确定一个锚点的posx posy
         if(!editing.current){
@@ -175,6 +188,16 @@ const EditorContainer: React.FC<Props> = (props) =>  {
             posY: y
           })
       break;
+      case 'rectangle':
+      case 'circle':
+        if(toolNode){
+          setNewToolNode({
+            ...newToolNode,
+            ctrPosX:x,
+            ctrPosY:y
+          })
+        }
+      break;
       case 'pen_new_path'://钢笔工具 如果在编辑模式 移动鼠标的时候不断变化控制点
         if(editing.current){
           setNewnode(
@@ -202,6 +225,33 @@ const EditorContainer: React.FC<Props> = (props) =>  {
             case 'mouse_drag_path':
               setDragPath(false);
               break;
+            case 'rectangle':
+                if(toolNode){
+                  let _pathId = pathId;
+                  if(pathId === -1){
+                    _pathId = UIStore.addPath(1);
+                    let nodes = getRectNodes(newToolNode);
+                    nodes.forEach((node)=>{
+                      UIStore.addNodes(_pathId,node.posX,node.posY,node.ctrPosX,node.ctrPosY,node.ctr2PosX,node.ctr2PosY);
+                    })
+                  }
+                }
+                setToolNode(false);
+              break;
+            case 'circle':
+                if(toolNode){
+                  let _pathId = pathId;
+                  if(pathId === -1){
+                    _pathId = UIStore.addPath(1);
+                    let nodes = getCircleNodes(newToolNode);
+                    nodes.forEach((node)=>{
+                      UIStore.addNodes(_pathId,node.posX,node.posY,node.ctrPosX,node.ctrPosY,node.ctr2PosX,node.ctr2PosY);
+                    })
+                  }
+                }
+                setToolNode(false);
+              break;
+              
             case 'pen_new_path':{//松开鼠标确定一个点 加入path里
               if (!editing.current){
                 return;
@@ -244,7 +294,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
             break;
           } 
 
-        },50)
+        },250)
   }
 
   const pathDoubleClick:any = () => {
@@ -257,7 +307,6 @@ const EditorContainer: React.FC<Props> = (props) =>  {
         let _pathId = pathId;
         const nodesLength = UIStore.pathList[_pathId].nodes.length;
         UIStore.addNodes(_pathId,newNode.posX,newNode.posY,newNode.ctrPosX,newNode.ctrPosY,newNode.ctrPosX,newNode.ctrPosY,nodesLength,true);
-
     }
     editing.current=false;
     setPathId(-1);
@@ -285,13 +334,41 @@ const EditorContainer: React.FC<Props> = (props) =>  {
         )
     }
   }
+  const addRectPath:any = () =>{
+    if(toolNode){
 
+      let nodes = new Array(4).fill({
+        posX:-1,
+        posY:-1,
+        ctrPosX:-1,
+        ctrPosY:-1,
+        ctr2PosX:-1,
+        ctr2PosY:-1
+      })
+      switch(props.currentTool){
+        case 'rectangle': nodes = getRectNodes(newToolNode);break;
+        case 'circle':nodes = getCircleNodes(newToolNode);break;
+      }
+      let getD = 
+      `M ${nodes[0].posX} ${nodes[0].posY} 
+      C ${nodes[0].ctrPosX} ${nodes[0].ctrPosY} ${nodes[1].ctrPosX} ${nodes[1].ctrPosY} ${nodes[1].posX} ${nodes[1].posY} 
+      C ${nodes[1].ctr2PosX} ${nodes[1].ctr2PosY} ${nodes[2].ctrPosX} ${nodes[2].ctrPosY} ${nodes[2].posX} ${nodes[2].posY} 
+      C ${nodes[2].ctr2PosX} ${nodes[2].ctr2PosY} ${nodes[3].ctrPosX} ${nodes[3].ctrPosY} ${nodes[3].posX} ${nodes[3].posY} 
+      C ${nodes[3].ctr2PosX} ${nodes[3].ctr2PosY} ${nodes[0].ctr2PosX} ${nodes[0].ctr2PosY} ${nodes[0].posX} ${nodes[0].posY} Z`;
+        return(
+          <Fragment>
+            <path d = {getD}  fill="none" stroke="#55f" strokeWidth="1"/>
+          </Fragment>  
+        )
+    }
+  }
   return(
     <div className="editor-container">
       <svg ref={edtiorRef} className="editor-svg" width={editorInfo.width} height={editorInfo.height}
            onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}
           onDoubleClick={pathDoubleClick}>
         {addNodes()}
+        {addRectPath()}
         {pathList.map(path => (
           <Path key={path.id} path={path} currentTool={props.currentTool}/>
         ))}

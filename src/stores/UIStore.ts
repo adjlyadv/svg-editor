@@ -45,7 +45,7 @@ class UIstore {
     this.pathList[id] = path;
   }
 
-  addPath = () => {
+  addPath = (type?:number) => {
     this.pathList.push(
         {
           id: this.pathList.length,
@@ -53,7 +53,7 @@ class UIstore {
           strokeWidth: 5,
           stroke: "#000000",
           fill: "none",
-          type: 0
+          type: type || 0
         }
     )
     return this.pathList.length - 1;
@@ -80,15 +80,30 @@ class UIstore {
   addNodes =(pathId: number , posX: number, posY: number, ctrPosX?: number, ctrPosY?: number, ctr2PosX?: number, ctr2PoxY?: number, index?: number,over?:boolean) => {
 
     const nodesLength = this.pathList[pathId].nodes.length;
+    const type = this.pathList[pathId].type;
     if(nodesLength === 0 || over){
-      this.pathList[pathId].nodes.push(
-        {
-          posX: posX,
-          posY: posY,
-          ctrPosX: ctrPosX || posX,
-          ctrPosY: ctrPosY || posY
-        }
-      )
+      if(type){//闭合路径的第一个有两个控制点
+        this.pathList[pathId].nodes.push(
+          {
+            posX: posX,
+            posY: posY,
+            ctrPosX: ctrPosX || posX,
+            ctrPosY: ctrPosY || posY,
+            ctr2PosX: ctr2PosX,
+            ctr2PosY: ctr2PoxY
+          }
+        )
+      }
+      else{//非闭合路径的第一个和最后一个只有一个控制点
+        this.pathList[pathId].nodes.push(
+          {
+            posX: posX,
+            posY: posY,
+            ctrPosX: ctrPosX || posX,
+            ctrPosY: ctrPosY || posY
+          }
+        )
+      }
       if(nodesLength === 0){
         myIndexDB.add(this.pathList[pathId]);
       }else{
@@ -97,7 +112,7 @@ class UIstore {
     }
     else{
       this.pathList[pathId].nodes = [
-        ...this.pathList[pathId].nodes.slice(0, index || nodesLength - 1),
+        ...this.pathList[pathId].nodes.slice(0, index || nodesLength),
         {
           posX: posX,
           posY: posY,
@@ -106,7 +121,7 @@ class UIstore {
           ctr2PosX: ctr2PosX,
           ctr2PosY: ctr2PoxY
         },
-        ...this.pathList[pathId].nodes.slice(index || nodesLength - 1)
+        ...this.pathList[pathId].nodes.slice(index || nodesLength)
       ]
       myIndexDB.update(this.pathList[pathId]);
     }

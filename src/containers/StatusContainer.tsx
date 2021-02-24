@@ -29,23 +29,23 @@ const StatusContainer: React.FC<Props> = observer((props: Props) => {
           <h4>状态栏</h4>
           <label className = "statusinput">
             <span>PositionX:</span>
-            <input type="number"  name="X" value = {pathInfo?.nodes[0].posX} onChange={inputChange}/>
+            <input type="number"  name="X" value = {pathInfo?pathInfo.nodes[0].posX:0} onChange={inputChange}/>
           </label>
           <label className = "statusinput">
             <span>PositionY:</span>
-            <input type="number" name="Y"  value = {pathInfo?.nodes[0].posY} onChange = {inputChange}/>
+            <input type="number" name="Y"  value = {pathInfo?pathInfo.nodes[0].posY:0} onChange = {inputChange}/>
           </label>
           <label className = "statusinput">
             <span>fill:</span>
-            <input type="color" name="fill" value = {pathInfo?.fill} onChange = {inputChange}/>
+            <input type="color" name="fill" value = {(!pathInfo || pathInfo.fill === 'none')?'#ffffff':pathInfo.fill} onChange = {inputChange}/>
           </label>
           <label className = "statusinput">
             <span>stroke Width:</span>
-            <input type="number" name="strokeWidth" value = {pathInfo?.strokeWidth} min = "0" max = "40"  onChange = {inputChange}/>
+            <input type="number" name="strokeWidth" value = {pathInfo?pathInfo.strokeWidth:0} min = "0" max = "40"  onChange = {inputChange}/>
           </label>
           <label className = "statusinput">
             <span>stroke:</span>
-            <input type="color" name="stroke" value = {pathInfo?.stroke}  onChange = {inputChange}/>
+            <input type="color" name="stroke" value = {pathInfo?pathInfo.stroke:'#000000'}  onChange = {inputChange}/>
           </label>
       </div>
     </Fragment>
