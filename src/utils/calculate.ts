@@ -25,10 +25,10 @@ export function getCircleNodes(node: Node){
   nodes[0] = {
     posX:posX,
     posY:posY + radius,
-    ctrPosX: posX - h,
-    ctrPosY: posY + radius,
-    ctr2PosX:posX + h,
-    ctr2PosY:posY + radius
+    ctrPosX:posX + h,
+    ctrPosY:posY + radius,
+    ctr2PosX: posX - h,
+    ctr2PosY: posY + radius,
   }
   nodes[1] = {
     posX:posX + radius,
@@ -55,5 +55,45 @@ export function getCircleNodes(node: Node){
     ctr2PosY:posY + h
   }
 
+  return nodes;
+}
+
+
+export function getRectNodes(node: Node){ 
+  let {posX,posY,ctrPosY,ctrPosX} = node;
+
+  let nodes = [];
+  nodes[0] = {
+    posX:posX,
+    posY:posY,
+    ctrPosX:posX,
+    ctrPosY:posY,
+    ctr2PosX:posX,
+    ctr2PosY:posY
+  }
+  nodes[1] = {
+    posX:ctrPosX,
+    posY:posY,
+    ctrPosX: ctrPosX,
+    ctrPosY: posY,
+    ctr2PosX:ctrPosX,
+    ctr2PosY:posY
+  }
+  nodes[2] = {
+    posX:ctrPosX,
+    posY:ctrPosY,
+    ctrPosX:ctrPosX,
+    ctrPosY:ctrPosY,
+    ctr2PosX:ctrPosX,
+    ctr2PosY:ctrPosY
+  }
+  nodes[3] = {
+    posX:posX,
+    posY:ctrPosY,
+    ctrPosX: posX,
+    ctrPosY: ctrPosY,
+    ctr2PosX:posX,
+    ctr2PosY:ctrPosY
+  }
   return nodes;
 }

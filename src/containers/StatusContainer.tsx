@@ -37,7 +37,7 @@ const StatusContainer: React.FC<Props> = observer((props: Props) => {
           </label>
           <label className = "statusinput">
             <span>fill:</span>
-            <input type="color" name="fill" value = {!pathInfo || pathInfo.fill.indexOf('none')?'#ffffff':pathInfo.fill} onChange = {inputChange}/>
+            <input type="color" name="fill" value = {(!pathInfo || pathInfo.fill === 'none')?'#ffffff':pathInfo.fill} onChange = {inputChange}/>
           </label>
           <label className = "statusinput">
             <span>stroke Width:</span>
