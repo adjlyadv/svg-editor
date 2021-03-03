@@ -225,7 +225,7 @@ const path: React.FC<Props> = observer((props: Props) => {
       <Fragment>
         <path onClick={handleClick} d={getD(nodes, !!props.path.type)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke} fill={props.path.fill}/>
         {id === UIStore.editingPathId && nodes.length && nodes.map((node, index) => 
-          <Node node={node} id={index} pathId={id} />
+          <Node key={index} node={node} id={index} pathId={id} />
         )}
       </Fragment>
     )

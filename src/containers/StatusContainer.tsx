@@ -18,7 +18,7 @@ const StatusContainer: React.FC<Props> = observer((props: Props) => {
       UIStore.setStateInfo(currentPathid,name,value);
     }
   }
-  let pathInfo;
+  let pathInfo:any;
   if(currentPathid !== -1){
      pathInfo = UIStore.pathList[currentPathid].nodes.length ? UIStore.pathList[currentPathid]: null;
   }
@@ -29,11 +29,11 @@ const StatusContainer: React.FC<Props> = observer((props: Props) => {
           <h4>状态栏</h4>
           <label className = "statusinput">
             <span>PositionX:</span>
-            <input type="number"  name="X" value = {pathInfo?pathInfo.nodes[0].posX:0} onChange={inputChange}/>
+            <input type="number"  name="X" value = {pathInfo?pathInfo.nodes[0].posX.toFixed(1):0} onChange={inputChange}/>
           </label>
           <label className = "statusinput">
             <span>PositionY:</span>
-            <input type="number" name="Y"  value = {pathInfo?pathInfo.nodes[0].posY:0} onChange = {inputChange}/>
+            <input type="number" name="Y"  value = {pathInfo?pathInfo.nodes[0].posY.toFixed(1):0} onChange = {inputChange}/>
           </label>
           <label className = "statusinput">
             <span>fill:</span>
