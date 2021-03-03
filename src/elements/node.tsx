@@ -8,7 +8,7 @@ interface Props {
   id: number,
   pathId: number,
   onClick?: any,
-  onMouseLeave?: any
+  onMouseLeave?: any,
 }
 
 const Node = observer((props: Props) => {
@@ -20,9 +20,15 @@ const Node = observer((props: Props) => {
   }
 
   const node = UIStore.pathList[props.pathId].nodes[props.id];
+  const mouseEvent = UIStore.mouseState;
+  const isEditingNode = mouseEvent.pathid === props.pathId && mouseEvent.nodeid === props.id;
+  const currentTool = UIStore.currentTool;
 
   const handleMouseDown = (elec:number, event: any) => {
-    UIStore.pathList[props.pathId].type = 1; //设定成闭合
+
+    if (currentTool === "pen_new_path") {
+      UIStore.pathList[props.pathId].type = 1; //设定成闭合
+    }
 
     switch(elec) {
       case nodeTypes.AnchorPoint: {
@@ -45,11 +51,13 @@ const Node = observer((props: Props) => {
   return(
     <Fragment>
       <circle className="point-control" onMouseDown={(e) => handleMouseDown(nodeTypes.AnchorPoint, e)} cx={node.posX} cy={node.posY} />
-        <line x1={node.posX} y1={node.posY} x2={node.ctrPosX} y2={node.ctrPosY} stroke="#555" strokeWidth="1" />
-      <circle className="point-control" onMouseDown={(e) => handleMouseDown(nodeTypes.Ctr1Point, e)} cx={node.ctrPosX} cy={node.ctrPosY} />
+      
+      { isEditingNode && <line x1={node.posX} y1={node.posY} x2={node.ctrPosX} y2={node.ctrPosY} stroke="#555" strokeWidth="1" /> }
+      { isEditingNode && <circle className="point-control" onMouseDown={(e) => handleMouseDown(nodeTypes.Ctr1Point, e)} cx={node.ctrPosX} cy={node.ctrPosY} /> }
+      
 
-      {node.ctr2PosX && node.ctr2PosY && <circle className="point-control" onMouseDown={(e) => handleMouseDown(nodeTypes.Ctr2Point, e)} cx={node.ctr2PosX} cy={node.ctr2PosY} />}
-      {node.ctr2PosX && node.ctr2PosY && <line x1={node.posX} y1={node.posY} x2={node.ctr2PosX} y2={node.ctr2PosY} stroke="#555" strokeWidth="1" />}
+      {isEditingNode && mouseEvent.nodeid === props.id && node.ctr2PosX && node.ctr2PosY && <circle className="point-control" onMouseDown={(e) => handleMouseDown(nodeTypes.Ctr2Point, e)} cx={node.ctr2PosX} cy={node.ctr2PosY} />}
+      {isEditingNode && mouseEvent.nodeid === props.id && node.ctr2PosX && node.ctr2PosY && <line x1={node.posX} y1={node.posY} x2={node.ctr2PosX} y2={node.ctr2PosY} stroke="#555" strokeWidth="1" />}
     </Fragment>
   )
 
