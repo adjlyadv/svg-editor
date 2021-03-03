@@ -34,6 +34,8 @@ class UIstore {
     nodeid: -1
   }
 
+  currentTool = "mouse";
+
   pathList: Path[] = [];
   editingPathId = -1;
   
@@ -134,6 +136,10 @@ class UIstore {
     this.mouseState.type = type;
     this.mouseState.drugging = dragging;
   }
+
+  setCurrentTool = (toolName: string) => {
+    this.currentTool = toolName;
+  } 
 
   movePath = (pathid: number , moveX: number , moveY: number) => {
     for( let it of this.pathList[pathid].nodes){
