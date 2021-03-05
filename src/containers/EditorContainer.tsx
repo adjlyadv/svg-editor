@@ -367,10 +367,10 @@ const EditorContainer: React.FC<Props> = (props) =>  {
       <svg ref={edtiorRef} className="editor-svg" width={editorInfo.width} height={editorInfo.height}
            onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}
           onDoubleClick={pathDoubleClick}>
+        {addNodes()}
         {pathList.map(path => (
           <Path key={path.id} path={path} currentTool={props.currentTool}/>
         ))}
-        {addNodes()}
         {addOtherPath()}
 
       </svg>
