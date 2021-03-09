@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react';
-import { Node as typeNode, UIStore } from '../stores/UIStore';
+import { Node as typeNode, Point as typePoint ,UIStore } from '../stores/UIStore';
 import { getRelativePositon, getCentralSymmetryPosition } from '../utils/calculate';
 import Node from './node';
 import _ from 'lodash';
@@ -13,7 +13,10 @@ interface Props{
     strokeWidth: number,
     stroke: string,
     fill:string,
-    type: number
+    type: number,
+    centerPoint:typePoint,//路径中心
+    rotate: number,//旋转角度
+    border: typePoint[]//边界
   }
   currentTool:String;
 }
@@ -109,6 +112,7 @@ const path: React.FC<Props> = observer((props: Props) => {
     const handleClick = (event: any) => {
       event.stopPropagation();
       UIStore.setEditingPath(props.path.id);
+      UIStore.setPathBbox(event.target,props.path.id);//被点击的时候计算中心点
     }
 
     const handleOnMouseMove = _.throttle((event: any, item: any) => {
@@ -203,7 +207,6 @@ const path: React.FC<Props> = observer((props: Props) => {
 
     if (props.currentTool === "pen_add_node") {
       const paths = getEditingPath();
-
       return (
         <Fragment>
           {
@@ -221,6 +224,21 @@ const path: React.FC<Props> = observer((props: Props) => {
       )
     }
 
+    if (props.currentTool === "mouse_rotate_path" && UIStore.editingPathId === id) {
+      let rotate = `rotate(${props.path.rotate},${props.path.centerPoint.ctrx},${props.path.centerPoint.ctry})`;
+      let borderD = `M ${props.path.border[0].ctrx} ${props.path.border[0].ctry}` 
+                      +` C ${props.path.border[0].ctrx} ${props.path.border[0].ctry} ${props.path.border[0].ctrx} ${props.path.border[0].ctry} ${props.path.border[1].ctrx} ${props.path.border[1].ctry}` 
+                      +` C ${props.path.border[1].ctrx} ${props.path.border[1].ctry} ${props.path.border[1].ctrx} ${props.path.border[1].ctry} ${props.path.border[2].ctrx} ${props.path.border[2].ctry}` 
+                      +` C ${props.path.border[2].ctrx} ${props.path.border[2].ctry} ${props.path.border[2].ctrx} ${props.path.border[2].ctry} ${props.path.border[3].ctrx} ${props.path.border[3].ctry}`
+                      +` C ${props.path.border[3].ctrx} ${props.path.border[3].ctry} ${props.path.border[3].ctrx} ${props.path.border[3].ctry} ${props.path.border[0].ctrx} ${props.path.border[0].ctry}`;
+      return (
+        <Fragment>
+          <path transform={rotate} onClick={handleClick} d={getD(nodes, !!props.path.type)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke} fill={props.path.fill}/>
+          <path d={borderD} transform={rotate} strokeWidth='2' stroke='#55f' fill='none' strokeDasharray='5'/>
+        </Fragment>
+
+      )
+    }
     return (
       <Fragment>
         <path onClick={handleClick} d={getD(nodes, !!props.path.type)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke} fill={props.path.fill}/>

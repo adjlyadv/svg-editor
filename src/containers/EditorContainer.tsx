@@ -3,7 +3,7 @@ import {myIndexDB} from '../stores/myIndexDb';
 import { Node as typeNode, UIStore } from '../stores/UIStore';
 import Path from '../elements/path';
 import { nodeTypes } from '../elements/constants';
-import { getRelativePositon, getCentralSymmetryPosition ,getCircleNodes,getRectNodes} from '../utils/calculate';
+import { getRelativePositon, getCentralSymmetryPosition ,getAngle,getCircleNodes,getRectNodes,calRotatePath} from '../utils/calculate';
 import * as _ from 'lodash';
 import '../style/EditorContainer.scss';
 
@@ -81,17 +81,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     event.stopPropagation();
     const { x, y } = getRelativePositon(event);
     switch(props.currentTool){
-      case 'pen_drag_node':
-        pathid = UIStore.mouseState.pathid;
-        nodeid = UIStore.mouseState.nodeid;
-        if(pathid!==-1 && nodeid!== -1){
-          let node1 = UIStore.pathList[pathid].nodes[nodeid];
-          setNode({
-            ...node1
-          });
-       }
-      break;
-      case 'mouse_drag_path':
+      case 'mouse_drag_path':{
         const currentPathid = UIStore.editingPathId;
         if(currentPathid !== -1){
           setDragPath(true);
@@ -101,6 +91,20 @@ const EditorContainer: React.FC<Props> = (props) =>  {
           })
         }
       break;
+      }
+      case 'mouse_rotate_path':{
+        const currentPathid = UIStore.editingPathId;
+        if(currentPathid !== -1){
+          setToolNode(true);
+          setNewToolNode({
+            posX:x,
+            posY:y,
+            ctrPosX:x,
+            ctrPosY:y
+          })
+        }
+      break;
+      }
       case 'rectangle':
       case 'circle':
         setToolNode(true);
@@ -110,6 +114,16 @@ const EditorContainer: React.FC<Props> = (props) =>  {
           ctrPosX:x,
           ctrPosY:y
         })
+      break;
+      case 'pen_drag_node':
+        pathid = UIStore.mouseState.pathid;
+        nodeid = UIStore.mouseState.nodeid;
+        if(pathid!==-1 && nodeid!== -1){
+          let node1 = UIStore.pathList[pathid].nodes[nodeid];
+          setNode({
+            ...node1
+          });
+       }
       break;
       case 'pen_new_path'://钢笔工具 按下的时候确定一个锚点的posx posy
         if(!editing.current){
@@ -141,6 +155,48 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     event.stopPropagation();
     const { x, y } = getRelativePositon(event);
     switch(props.currentTool){
+      case 'mouse_drag_path':
+        if(!dragPath){
+          return;
+        }
+        const moveX=x-pos.posX;
+        const moveY=y-pos.posY;
+        const currentPathid = UIStore.editingPathId;
+          UIStore.movePath(currentPathid , moveX , moveY)
+          setPos({
+            posX: x,
+            posY: y
+          })
+      break;
+      case 'mouse_rotate_path':{
+        if(toolNode){
+          const currentPathid = UIStore.editingPathId;
+          const {ctrx,ctry} = UIStore.pathList[currentPathid].centerPoint;
+          setNewToolNode({
+            ...newToolNode,
+            ctrPosX:x,
+            ctrPosY:y
+          })
+          let angle = getAngle({
+            posX:newToolNode.posX - ctrx,
+            posY:newToolNode.posY - ctry,
+            ctrPosX:newToolNode.ctrPosX - ctrx,
+            ctrPosY:newToolNode.ctrPosY - ctry
+          });
+          UIStore.setStateInfo(currentPathid,'rotate',angle.toString());
+        }
+      break;
+      }
+      case 'rectangle':
+      case 'circle':
+        if(toolNode){
+          setNewToolNode({
+            ...newToolNode,
+            ctrPosX:x,
+            ctrPosY:y
+          })
+        }
+      break;
       case 'pen_drag_node':
         if(!UIStore.mouseState.drugging){
           return
@@ -175,29 +231,6 @@ const EditorContainer: React.FC<Props> = (props) =>  {
 
       }
       break;
-      case 'mouse_drag_path':
-        if(!dragPath){
-          return;
-        }
-        const moveX=x-pos.posX;
-        const moveY=y-pos.posY;
-        const currentPathid = UIStore.editingPathId;
-          UIStore.movePath(currentPathid , moveX , moveY)
-          setPos({
-            posX: x,
-            posY: y
-          })
-      break;
-      case 'rectangle':
-      case 'circle':
-        if(toolNode){
-          setNewToolNode({
-            ...newToolNode,
-            ctrPosX:x,
-            ctrPosY:y
-          })
-        }
-      break;
       case 'pen_new_path'://钢笔工具 如果在编辑模式 移动鼠标的时候不断变化控制点
         if(editing.current){
           setNewnode(
@@ -219,11 +252,17 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     mouseUpTimeChange = setTimeout(
         () => {
           switch(props.currentTool){
-            case 'pen_drag_node':
-              UIStore.setMouseState(nodeTypes.AnchorPoint, false, pathid, nodeid);
-              break;
             case 'mouse_drag_path':
               setDragPath(false);
+              break;
+            case 'mouse_rotate_path':
+              if(toolNode){
+                const currentPathid = UIStore.editingPathId;
+                calRotatePath(currentPathid);
+                UIStore.setStateInfo(currentPathid,'rotate','0');//把rotate置零
+              }
+              setToolNode(false);
+              setNewToolNode({posX: -1, posY: -1, ctrPosX: -1, ctrPosY: -1 });
               break;
             case 'rectangle':
                 if(toolNode){
@@ -237,6 +276,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
                   }
                 }
                 setToolNode(false);
+                setNewToolNode({posX: -1, posY: -1, ctrPosX: -1, ctrPosY: -1 });
               break;
             case 'circle':
                 if(toolNode){
@@ -250,8 +290,11 @@ const EditorContainer: React.FC<Props> = (props) =>  {
                   }
                 }
                 setToolNode(false);
+                setNewToolNode({posX: -1, posY: -1, ctrPosX: -1, ctrPosY: -1 });
               break;
-              
+            case 'pen_drag_node':
+                UIStore.setMouseState(nodeTypes.AnchorPoint, false, pathid, nodeid);
+              break; 
             case 'pen_new_path':{//松开鼠标确定一个点 加入path里
               if (!editing.current){
                 return;
@@ -362,6 +405,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
         )
     }
   }
+
   return(
     <div className="editor-container">
       <svg ref={edtiorRef} className="editor-svg" width={editorInfo.width} height={editorInfo.height}

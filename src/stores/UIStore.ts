@@ -9,14 +9,20 @@ export interface Node{
   ctr2PosX?: number,
   ctr2PosY?: number,
 }
-
+export interface Point{
+  ctrx:number,
+  ctry:number
+}
 export interface Path {
   id: number,
   nodes: Node[],
   type: number, // 0 非闭合 1 闭合
   strokeWidth: number,
   stroke: string,
-  fill:string
+  fill:string,
+  centerPoint:Point,//路径中心
+  rotate:number;//旋转的角度
+  border: Point[]//边界  point[0]代表左上角  point[1]右上角  point[2]右下角  point[3] 左下角
 }
 
 class UIstore {
@@ -31,7 +37,7 @@ class UIstore {
     type: nodeTypes.AnchorPoint,
     drugging: false,
     pathid: -1,
-    nodeid: -1
+    nodeid: -1,
   }
 
   currentTool = "mouse";
@@ -41,6 +47,21 @@ class UIstore {
   
   constructor() {
     makeAutoObservable(this); 
+  }
+
+  //设置路径边界和中心
+  setPathBbox = (path:SVGPathElement,pathid:number) => {
+    let svgBox = path.getBBox();
+    let ctrx = svgBox.x + (svgBox.width >> 1);
+    let ctry = svgBox.y + (svgBox.height >> 1);
+    this.pathList[pathid].centerPoint = {ctrx,ctry};
+    this.pathList[pathid].border = [
+      {ctrx:svgBox.x, ctry:svgBox.y},
+      {ctrx: svgBox.x + svgBox.width, ctry:svgBox.y},
+      {ctrx: svgBox.x + svgBox.width, ctry:svgBox.y + svgBox.height},
+      {ctrx: svgBox.x, ctry:svgBox.y + svgBox.height}
+    ];
+    myIndexDB.update(this.pathList[pathid]);
   }
 
   initPathList = (id:number,path:Path) =>{
@@ -55,7 +76,10 @@ class UIstore {
           strokeWidth: 5,
           stroke: "#000000",
           fill: "none",
-          type: type || 0
+          type: type || 0,
+          centerPoint:{ctrx:-1,ctry:-1},
+          rotate:0,
+          border:[{ctrx:-1,ctry:-1},{ctrx:-1,ctry:-1},{ctrx:-1,ctry:-1},{ctrx:-1,ctry:-1}]
         }
     )
     return this.pathList.length - 1;
@@ -68,7 +92,6 @@ class UIstore {
 
   setEditingPath = (pathId: number) => {
     this.editingPathId = pathId;
-    myIndexDB.update(this.pathList[pathId]);
   }
 
   setNodes = (pathId: number, nodeId: number, node: Node) => {
@@ -76,7 +99,6 @@ class UIstore {
       this.pathList[pathId].nodes[nodeId] = node;
       myIndexDB.update(this.pathList[pathId]);
     }
-    
   }
 
   addNodes =(pathId: number , posX: number, posY: number, ctrPosX?: number, ctrPosY?: number, ctr2PosX?: number, ctr2PoxY?: number, index?: number,over?:boolean) => {
@@ -155,6 +177,9 @@ class UIstore {
     myIndexDB.update(this.pathList[pathid]);
   }
 
+  setBorder = (pathid: number, border: Point [])=>{
+    this.pathList[pathid].border = border;
+  }
 
   setStateInfo = (pathId: number, name:string, value:string) => {
     switch(name){
@@ -174,6 +199,9 @@ class UIstore {
         break;
       case 'stroke':
         this.pathList[pathId].stroke = value;
+        break;
+      case 'rotate':
+        this.pathList[pathId].rotate = Number(value);
         break;
       default:        
     }
