@@ -5,6 +5,7 @@ import Node from './node';
 import _ from 'lodash';
 import Bezier from 'bezier-js';
 import { observer } from 'mobx-react';
+import ScalingContainer from '../containers/ScalingContainer';
 
 interface Props{
   path: {
@@ -17,6 +18,15 @@ interface Props{
     centerPoint:typePoint,//路径中心
     rotate: number,//旋转角度
     border: typePoint[]//边界
+    scaleX: number,
+    scaleY: number,
+    scale_origin: string,
+    translate:{
+      left: number,
+      right: number,
+      top: number,
+      bottom: number
+    }
   }
   currentTool:String;
 }
@@ -239,6 +249,19 @@ const path: React.FC<Props> = observer((props: Props) => {
 
       )
     }
+
+  if (props.currentTool === "mouse_scaling_path" && UIStore.editingPathId === id) {
+    if(props.path.border.length === 4) {
+      let scale = `scale(${props.path.scaleX},${props.path.scaleY})`;
+      return(
+        <Fragment>
+          <path  transform ={scale} transform-origin={props.path.scale_origin}onClick={handleClick} d={getD(nodes, !!props.path.type)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke} fill={props.path.fill}/>
+          <ScalingContainer path={props.path}/>
+        </Fragment>
+      )
+    }
+  }
+
     return (
       <Fragment>
         <path onClick={handleClick} d={getD(nodes, !!props.path.type)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke} fill={props.path.fill}/>

@@ -145,3 +145,9 @@ export function getRectNodes(node: Node){
   }
   return nodes;
 }
+export function scallingPos(pre: number, now: number, pos:number, border: number){
+  if(pos === border){
+    return 0;
+  }
+  return (pos-border)/pre*now;
+}

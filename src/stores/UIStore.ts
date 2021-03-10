@@ -1,6 +1,7 @@
 import { makeAutoObservable} from 'mobx';
 import { nodeTypes } from '../elements/constants';
 import { myIndexDB } from './myIndexDb';
+import {scallingPos} from '../utils/calculate';
 export interface Node{
   posX: number,
   posY: number,
@@ -22,7 +23,17 @@ export interface Path {
   fill:string,
   centerPoint:Point,//路径中心
   rotate:number;//旋转的角度
-  border: Point[]//边界  point[0]代表左上角  point[1]右上角  point[2]右下角  point[3] 左下角
+  border: Point[],//边界  point[0]代表左上角  point[1]右上角  point[2]右下角  point[3] 左下角
+  scalling:string,
+  scaleX: number,
+  scaleY: number,
+  scale_origin: string,
+  translate:{
+    left: number,
+    right: number,
+    top: number,
+    bottom: number
+  }
 }
 
 class UIstore {
@@ -79,7 +90,17 @@ class UIstore {
           type: type || 0,
           centerPoint:{ctrx:-1,ctry:-1},
           rotate:0,
-          border:[{ctrx:-1,ctry:-1},{ctrx:-1,ctry:-1},{ctrx:-1,ctry:-1},{ctrx:-1,ctry:-1}]
+          border:[{ctrx:-1,ctry:-1},{ctrx:-1,ctry:-1},{ctrx:-1,ctry:-1},{ctrx:-1,ctry:-1}],
+          scalling:"",
+          scaleX: 1,
+          scaleY: 1,
+          scale_origin: '',
+          translate:{
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0
+          }
         }
     )
     return this.pathList.length - 1;
@@ -181,6 +202,140 @@ class UIstore {
     this.pathList[pathid].border = border;
   }
 
+  setTranslate = (pathid: number, translate: {left: number, right: number,top: number,bottom: number}) =>{
+    this.pathList[pathid].translate=translate;
+  }
+  setScalling = (pathid: number, scalling: string) => {
+    if(pathid > -1){
+      this.pathList[pathid].scalling = scalling;
+    }
+}
+  setScaleY = (pathid: number,y: number) => {
+    if(this.pathList[pathid].scalling.indexOf("top") !== -1){
+      if(y > this.pathList[pathid].border[2].ctry){
+        return
+      }
+      const preHeight = this.pathList[pathid].border[3].ctry - this.pathList[pathid].border[1].ctry;
+      const height  =this.pathList[pathid].border[3].ctry - y;
+      this.pathList[pathid].translate.top = preHeight - height;
+      this.pathList[pathid].scaleY = height/preHeight;
+    }
+    else {
+      if (y < this.pathList[pathid].border[0].ctry) {
+        return
+      }
+      const preHeight = this.pathList[pathid].border[3].ctry - this.pathList[pathid].border[1].ctry;
+      const height  = y - this.pathList[pathid].border[0].ctry;
+      this.pathList[pathid].scaleY = height/preHeight;
+      this.pathList[pathid].translate.bottom = height - preHeight;
+    }
+
+  }
+  setScaleX = (pathid: number,x: number) => {
+    if(this.pathList[pathid].scalling.indexOf("left") !== -1){
+      if(x > this.pathList[pathid].border[1].ctrx){
+        return
+      }
+      const preWidth = this.pathList[pathid].border[1].ctrx - this.pathList[pathid].border[0].ctrx;
+      const width  =this.pathList[pathid].border[1].ctrx - x
+      this.pathList[pathid].translate.left=preWidth-width;
+      this.pathList[pathid].scaleX=width/preWidth;
+    }
+    else {
+      if (x < this.pathList[pathid].border[0].ctrx) {
+        return
+      }
+      const preWidth = this.pathList[pathid].border[1].ctrx - this.pathList[pathid].border[0].ctrx;
+      const width  = x - this.pathList[pathid].border[0].ctrx;
+      this.pathList[pathid].translate.right = width - preWidth;
+      this.pathList[pathid].scaleX=width/preWidth;
+    }
+
+}
+  setScale = (pathid: number,x: number ,y: number) => {
+    this.pathList[pathid].scaleX = x;
+    this.pathList[pathid].scaleY = y;
+  }
+
+
+
+scaleFinshX =(pathid: number, x: number) => {
+    if(this.pathList[pathid].scalling.indexOf("left") !== -1) {
+      const preWidth = this.pathList[pathid].border[1].ctrx - this.pathList[pathid].border[0].ctrx;
+      const width = this.pathList[pathid].border[1].ctrx - x;
+      const border = this.pathList[pathid].border[0].ctrx;
+      for (let it of this.pathList[pathid].nodes) {
+        it.posX = x + scallingPos(preWidth, width, it.posX, border);
+        it.ctrPosX = x + scallingPos(preWidth, width, it.ctrPosX, border);
+        if (it.ctr2PosX && it.ctr2PosY) {
+          it.ctr2PosX = x + scallingPos(preWidth, width, it.ctr2PosX, border);
+        }
+        this.pathList[pathid].border[0].ctrx = x;
+        this.pathList[pathid].border[3].ctrx = x;
+        this.pathList[pathid].centerPoint.ctrx = (this.pathList[pathid].border[1].ctrx + x) / 2;
+      }
+
+    }
+    else if(this.pathList[pathid].scalling.indexOf("right") !== -1){
+      const preWidth = this.pathList[pathid].border[1].ctrx - this.pathList[pathid].border[0].ctrx;
+      const width = x - this.pathList[pathid].border[0].ctrx ;
+      const border = this.pathList[pathid].border[1].ctrx;
+      for (let it of this.pathList[pathid].nodes) {
+        it.posX = x + scallingPos(preWidth, width, it.posX, border);
+        it.ctrPosX = x + scallingPos(preWidth, width, it.ctrPosX, border);
+        if (it.ctr2PosX && it.ctr2PosY) {
+          it.ctr2PosX = x + scallingPos(preWidth, width, it.ctr2PosX, border);
+        }
+        this.pathList[pathid].border[1].ctrx = x;
+        this.pathList[pathid].border[2].ctrx = x;
+        this.pathList[pathid].centerPoint.ctrx = (this.pathList[pathid].border[0].ctrx + x) / 2;
+      }
+    }
+  this.pathList[pathid].scaleX=1;
+  this.pathList[pathid].translate.left=0;
+  this.pathList[pathid].translate.right=0;
+
+}
+
+  scaleFinshY =(pathid: number, y: number) => {
+    if(this.pathList[pathid].scalling.indexOf("top") !== -1) {
+      const preHeight = this.pathList[pathid].border[3].ctry - this.pathList[pathid].border[0].ctry;
+      const height = this.pathList[pathid].border[3].ctry - y;
+      const border = this.pathList[pathid].border[0].ctry;
+      for (let it of this.pathList[pathid].nodes) {
+        it.posY = y + scallingPos(preHeight, height, it.posY, border);
+        it.ctrPosY = y + scallingPos(preHeight, height, it.ctrPosY, border);
+        if (it.ctr2PosX && it.ctr2PosY) {
+          it.ctr2PosY = y + scallingPos(preHeight, height, it.ctr2PosY, border);
+        }
+        this.pathList[pathid].border[0].ctry = y;
+        this.pathList[pathid].border[1].ctry = y;
+        this.pathList[pathid].centerPoint.ctry = (this.pathList[pathid].border[3].ctry + y) / 2;
+      }
+    }
+    else if(this.pathList[pathid].scalling.indexOf("bottom") !== -1){
+      const preHeight = this.pathList[pathid].border[3].ctry - this.pathList[pathid].border[0].ctry;
+      const height = y - this.pathList[pathid].border[0].ctry ;
+      const border = this.pathList[pathid].border[3].ctry;
+      for (let it of this.pathList[pathid].nodes) {
+        it.posY = y + scallingPos(preHeight, height, it.posY, border);
+        it.ctrPosY = y + scallingPos(preHeight, height, it.ctrPosY, border);
+        if (it.ctr2PosX && it.ctr2PosY) {
+          it.ctr2PosY = y + scallingPos(preHeight, height, it.ctr2PosY, border);
+        }
+        this.pathList[pathid].border[3].ctry = y;
+        this.pathList[pathid].border[2].ctry = y;
+        this.pathList[pathid].centerPoint.ctry = (this.pathList[pathid].border[0].ctry + y) / 2;
+      }
+    }
+    this.pathList[pathid].scaleY=1;
+    this.pathList[pathid].translate.bottom=0;
+    this.pathList[pathid].translate.top=0;
+
+  }
+
+
+
   setStateInfo = (pathId: number, name:string, value:string) => {
     switch(name){
       case 'X':
@@ -202,6 +357,15 @@ class UIstore {
         break;
       case 'rotate':
         this.pathList[pathId].rotate = Number(value);
+        break;
+      case 'scale_origin':
+        this.pathList[pathId].scale_origin = value;
+        break;
+      case 'scaleX':
+        this.pathList[pathId].scaleX = Number(value);
+        break;
+      case 'scaleY':
+        this.pathList[pathId].scaleY = Number(value);
         break;
       default:        
     }
