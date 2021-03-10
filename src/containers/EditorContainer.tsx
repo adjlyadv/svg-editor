@@ -168,6 +168,19 @@ const EditorContainer: React.FC<Props> = (props) =>  {
             posY: y
           })
       break;
+      case 'mouse_scaling_path':{
+
+        const currentPathid = UIStore.editingPathId;
+        if(currentPathid !== -1 && UIStore.pathList[currentPathid].scalling !== ''){
+          if(UIStore.pathList[currentPathid].scalling.indexOf("left") !== -1  || UIStore.pathList[currentPathid].scalling.indexOf("right") !== -1){
+            UIStore.setScaleX(currentPathid,x);
+          }
+          if(UIStore.pathList[currentPathid].scalling.indexOf("top") !== -1  || UIStore.pathList[currentPathid].scalling.indexOf("bottom") !== -1){
+            UIStore.setScaleY(currentPathid,y);
+          }
+        }
+        break;
+      }
       case 'mouse_rotate_path':{
         if(toolNode){
           const currentPathid = UIStore.editingPathId;
@@ -248,6 +261,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
 
   const handleMouseUp = (event: any) => {
     event.stopPropagation();
+    const { x, y } = getRelativePositon(event);
     clearTimeout(mouseUpTimeChange);
     mouseUpTimeChange = setTimeout(
         () => {
@@ -255,6 +269,18 @@ const EditorContainer: React.FC<Props> = (props) =>  {
             case 'mouse_drag_path':
               setDragPath(false);
               break;
+            case 'mouse_scaling_path':{
+              const currentPathid = UIStore.editingPathId;
+              if(UIStore.pathList[currentPathid]?.scalling !== ""){
+                UIStore.scaleFinshX(currentPathid,x);
+                UIStore.scaleFinshY(currentPathid,y);
+                UIStore.setScalling(currentPathid,"");
+                //UIStore.setScale(currentPathid,1,1)
+                //UIStore.setTranslate(currentPathid,{left:0,right:0,top:0,bottom:0})
+              }
+
+              break;
+            }
             case 'mouse_rotate_path':
               if(toolNode){
                 const currentPathid = UIStore.editingPathId;
