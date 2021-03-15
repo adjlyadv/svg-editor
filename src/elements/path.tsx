@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react';
-import { Node as typeNode, Point as typePoint ,UIStore } from '../stores/UIStore';
+import { Node as typeNode, UIStore, Path as typePath } from '../stores/UIStore';
 import { getRelativePositon, getCentralSymmetryPosition } from '../utils/calculate';
 import Node from './node';
 import _ from 'lodash';
@@ -8,31 +8,15 @@ import { observer } from 'mobx-react';
 import ScalingContainer from '../containers/ScalingContainer';
 
 interface Props{
-  path: {
-    id: number,
-    nodes: typeNode[],
-    strokeWidth: number,
-    stroke: string,
-    fill:string,
-    type: number,
-    centerPoint:typePoint,//路径中心
-    rotate: number,//旋转角度
-    border: typePoint[]//边界
-    scaleX: number,
-    scaleY: number,
-    scale_origin: string,
-    translate:{
-      left: number,
-      right: number,
-      top: number,
-      bottom: number
-    }
-  }
+  path: typePath,
+  pathId: number,
   currentTool:String;
 }
 
 const path: React.FC<Props> = observer((props: Props) => {
     
+    const id = props.pathId;
+
     const getD = (nodes: string | any[], type: boolean) => {
 
       let d = "";
@@ -121,8 +105,8 @@ const path: React.FC<Props> = observer((props: Props) => {
 
     const handleClick = (event: any) => {
       event.stopPropagation();
-      UIStore.setEditingPath(props.path.id);
-      UIStore.setPathBbox(event.target,props.path.id);//被点击的时候计算中心点
+      UIStore.setEditingPath(id);
+      UIStore.setPathBbox(event.target, id);//被点击的时候计算中心点
     }
 
     const handleOnMouseMove = _.throttle((event: any, item: any) => {
@@ -213,7 +197,7 @@ const path: React.FC<Props> = observer((props: Props) => {
 
     const [newNode, setNewNode] = useState<any>();
     const [bezier, setBezier] = useState<Bezier>();
-    const { id, nodes } = props.path;
+    const { nodes } = props.path;
 
     if (props.currentTool === "pen_add_node") {
       const paths = getEditingPath();
@@ -256,7 +240,7 @@ const path: React.FC<Props> = observer((props: Props) => {
       return(
         <Fragment>
           <path  transform ={scale} transform-origin={props.path.scale_origin}onClick={handleClick} d={getD(nodes, !!props.path.type)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke} fill={props.path.fill}/>
-          <ScalingContainer path={props.path}/>
+          <ScalingContainer pathId={id} path={props.path}/>
         </Fragment>
       )
     }

@@ -98,7 +98,7 @@ class IndexDB{
     },1000,{ 'maxWait': 10000 })
 
     //删除数据
-    remove = (id:number) => {
+    remove = (id: string) => {
         if(this.db){
             let request = this.db.transaction([this.tableName], 'readwrite')
             .objectStore(this.tableName)

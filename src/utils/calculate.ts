@@ -151,3 +151,7 @@ export function scallingPos(pre: number, now: number, pos:number, border: number
   }
   return (pos-border)/pre*now;
 }
+
+export function genID(){
+  return Number(Math.random().toString().substr(3, 18) + Date.now()).toString(36);
+}

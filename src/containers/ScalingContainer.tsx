@@ -1,35 +1,13 @@
 import React, {Fragment, useEffect, useState} from 'react';
-import path from "../elements/path";
-import {Node as typeNode, Point as typePoint, UIStore} from '../stores/UIStore'
+import {UIStore, Path as typePath} from '../stores/UIStore'
 import '../style/ScalingContainer.scss'
 
-
-
 interface Props{
-  path: {
-    id: number,
-    nodes: typeNode[],
-    strokeWidth: number,
-    stroke: string,
-    fill:string,
-    type: number,
-    centerPoint:typePoint,//路径中心
-    rotate: number,//旋转角度
-    border: typePoint[]//边界
-    scaleX: number,
-    scaleY: number,
-    scale_origin: string,
-    translate:{
-      left: number,
-      right: number,
-      top: number,
-      bottom: number
-    }
-  }
+  path: typePath,
+  pathId: number,
 }
 
 const ScalingContainer:  React.FC<Props> = (props) => {
-
 
   useEffect(() => {
     setBorder(props.path.border);
@@ -55,23 +33,23 @@ const ScalingContainer:  React.FC<Props> = (props) => {
 
   const handleMouseDown = (event: any) => {
     event.stopPropagation();
-    UIStore.setScalling(props.path.id, event.target.id);
+    UIStore.setScalling(props.pathId, event.target.id);
     switch (event.target.id){
       case "left" :
       case "left_bottom" :
       case "bottom" :
-        UIStore.setStateInfo(props.path.id, "scale_origin", `${props.path.border[1].ctrx} ${props.path.border[1].ctry}`);
+        UIStore.setStateInfo(props.pathId, "scale_origin", `${props.path.border[1].ctrx} ${props.path.border[1].ctry}`);
         break;
       case "right" :
       case "right_bottom" :
-        UIStore.setStateInfo(props.path.id, "scale_origin", `${props.path.border[0].ctrx} ${props.path.border[0].ctry}`);
+        UIStore.setStateInfo(props.pathId, "scale_origin", `${props.path.border[0].ctrx} ${props.path.border[0].ctry}`);
         break;
       case "top" :
       case "left_top" :
-        UIStore.setStateInfo(props.path.id, "scale_origin", `${props.path.border[2].ctrx} ${props.path.border[2].ctry}`);
+        UIStore.setStateInfo(props.pathId, "scale_origin", `${props.path.border[2].ctrx} ${props.path.border[2].ctry}`);
         break;
       case "right_top" :
-        UIStore.setStateInfo(props.path.id, "scale_origin", `${props.path.border[3].ctrx} ${props.path.border[3].ctry}`);
+        UIStore.setStateInfo(props.pathId, "scale_origin", `${props.path.border[3].ctrx} ${props.path.border[3].ctry}`);
         break;
 
     }
