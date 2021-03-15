@@ -1,7 +1,7 @@
 import { makeAutoObservable} from 'mobx';
 import { nodeTypes } from '../elements/constants';
 import { myIndexDB } from './myIndexDb';
-import {scallingPos} from '../utils/calculate';
+import {genID, scallingPos} from '../utils/calculate';
 export interface Node{
   posX: number,
   posY: number,
@@ -15,7 +15,7 @@ export interface Point{
   ctry:number
 }
 export interface Path {
-  id: number,
+  id: string,
   nodes: Node[],
   type: number, // 0 非闭合 1 闭合
   strokeWidth: number,
@@ -76,13 +76,14 @@ class UIstore {
   }
 
   initPathList = (id:number,path:Path) =>{
-    this.pathList[id] = path;
+    // this.pathList[id] = path; 
+    this.pathList.push(path);
   }
 
   addPath = (type?:number) => {
     this.pathList.push(
         {
-          id: this.pathList.length,
+          id: genID(),
           nodes: [],
           strokeWidth: 5,
           stroke: "#000000",
@@ -107,8 +108,13 @@ class UIstore {
   }
 
   deletePath = (pathId: number) => {
-    this.pathList = this.pathList.splice(pathId,1);
-    myIndexDB.remove(pathId);
+    const id = this.pathList[pathId].id;
+    this.pathList.splice(pathId,1);
+    // for (let i = 0; i < this.pathList.length; i ++) {
+    //   this.pathList[i].id = i;
+    // }
+    this.editingPathId = -1;
+    myIndexDB.remove(id);
   }
 
   setEditingPath = (pathId: number) => {

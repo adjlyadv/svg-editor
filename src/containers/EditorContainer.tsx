@@ -6,6 +6,7 @@ import { nodeTypes } from '../elements/constants';
 import { getRelativePositon, getCentralSymmetryPosition ,getAngle,getCircleNodes,getRectNodes,calRotatePath} from '../utils/calculate';
 import * as _ from 'lodash';
 import '../style/EditorContainer.scss';
+import useKeyboardShortcut from '../utils/useKeyboardShortcut';
 
 interface Props{
   currentTool:string;
@@ -432,14 +433,16 @@ const EditorContainer: React.FC<Props> = (props) =>  {
     }
   }
 
+  useKeyboardShortcut("backspace", () => UIStore.deletePath(UIStore.editingPathId));
+
   return(
     <div className="editor-container">
       <svg ref={edtiorRef} className="editor-svg" width={editorInfo.width} height={editorInfo.height}
            onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}
           onDoubleClick={pathDoubleClick}>
         {addNodes()}
-        {pathList.map(path => (
-          <Path key={path.id} path={path} currentTool={props.currentTool}/>
+        {pathList.map((path, index) => (
+          <Path pathId={index} path={path} currentTool={props.currentTool}/>
         ))}
         {addOtherPath()}
 
