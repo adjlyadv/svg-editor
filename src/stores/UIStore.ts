@@ -33,6 +33,10 @@ export interface Path {
     right: number,
     top: number,
     bottom: number
+  },
+  dragPath: {
+    x: number,
+    y: number
   }
 }
 
@@ -101,6 +105,10 @@ class UIstore {
             right: 0,
             top: 0,
             bottom: 0
+          },
+          dragPath: {
+            x: 0,
+            y: 0
           }
         }
     )
@@ -201,6 +209,14 @@ class UIstore {
         it.ctr2PosY += moveY;
       }
     }
+    for( let it of this.pathList[pathid].border){
+      it.ctrx += moveX;
+      it.ctry += moveY;
+    }
+    this.pathList[pathid].centerPoint.ctrx += moveX;
+    this.pathList[pathid].centerPoint.ctry += moveY;
+
+    this.setDragPath(pathid,0,0);
     myIndexDB.update(this.pathList[pathid]);
   }
 
@@ -237,6 +253,10 @@ class UIstore {
     }
 
   }
+  setDragPath = (pathid: number,x: number, y: number) => {
+    this.pathList[pathid].dragPath = {x: x, y: y};
+  }
+
   setScaleX = (pathid: number,x: number) => {
     if(this.pathList[pathid].scalling.indexOf("left") !== -1){
       if(x > this.pathList[pathid].border[1].ctrx){
@@ -265,7 +285,7 @@ class UIstore {
 
 
 
-scaleFinshX =(pathid: number, x: number) => {
+scaleFinshX =(pathid: number, x: number) => {//du
     if(this.pathList[pathid].scalling.indexOf("left") !== -1) {
       const preWidth = this.pathList[pathid].border[1].ctrx - this.pathList[pathid].border[0].ctrx;
       const width = this.pathList[pathid].border[1].ctrx - x;
