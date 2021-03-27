@@ -67,7 +67,7 @@ const ScalingContainer:  React.FC<Props> = (props) => {
       <rect className='react' transform={`translate(${(translate.left+translate.right)/2},${translate.bottom})`} x={props.path.centerPoint.ctrx-4} y={border[3].ctry-4} />
       <rect className='react' transform={`translate(${translate.left},${(translate.bottom+translate.top)/2})`} x={border[0].ctrx-4} y={props.path.centerPoint.ctry-4}/>
       <rect className='react' transform={`translate(${translate.right},${(translate.bottom+translate.top)/2})`} x={border[1].ctrx-4} y={props.path.centerPoint.ctry-4} />
-     //放大热区
+      
       <rect className='react-big' transform={`translate(${translate.left},${translate.top})`} id="left_top" x={props.path.border[0].ctrx-8} y={border[0].ctry-8} onMouseDown={handleMouseDown}/>
       <rect className='react-big' transform={`translate(${translate.right},${translate.top})`}id="right_top" x={border[1].ctrx-8} y={border[1].ctry-8} onMouseDown={handleMouseDown}/>
       <rect className='react-big' transform={`translate(${translate.right},${translate.bottom})`}id="right_bottom" x={border[2].ctrx-8} y={border[2].ctry-8} onMouseDown={handleMouseDown}/>
