@@ -47,6 +47,10 @@ const StatusContainer: React.FC<Props> = observer((props: Props) => {
             <span>stroke:</span>
             <input type="color" name="stroke" value = {pathInfo?pathInfo.stroke:'#000000'}  onChange = {inputChange}/>
           </label>
+          <label className = "statusinput">
+            <span>rotate:</span>
+            <input type="text" name="rotate" readOnly={true} value = {pathInfo?pathInfo.rotate.toFixed(2):0}/>
+          </label>
       </div>
     </Fragment>
   )

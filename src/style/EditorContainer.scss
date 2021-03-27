@@ -9,6 +9,10 @@
     background: white;
   }
 
+  .rotate-mouse{
+    cursor:url(../asset/rotate.svg),auto;
+  }
+
   .point-control {
     cursor: move;
     fill: #0FF;

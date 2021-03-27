@@ -16,10 +16,17 @@ export function getCentralSymmetryPosition(node: Node) {
 }
 
 export function getAngle(node:Node){
-  const dot = node.posX * node.ctrPosX + node.posY * node.ctrPosY
-  const det = node.posX * node.ctrPosY - node.posY * node.ctrPosY
-  const angle = Math.atan2(det, dot) / Math.PI * 180
-  return (angle + 360) % 360
+  let {posX:x1,posY:y1,ctrPosX:x2,ctrPosY:y2} = node;
+   var signOfAB = x1*y2 - y1*x2 ;
+  //计算cos =(x1x2+y1y2)/[√(x1²+y1²)*√(x2²+y2²)]
+   var cos =( x1 * x2 + y1 * y2) /( Math.sqrt(Math.pow(x1, 2) + Math.pow(y1, 2)) * Math.sqrt(Math.pow(x2, 2) + Math.pow(y2, 2)) );
+   var radina = Math.acos(cos);
+   var angle =  180 / (Math.PI / radina);
+  //如果在中线左边 就需要加 180度
+    if(signOfAB < 0){
+        angle =  - angle;
+    }
+    return angle;
 }
 
 export function calRotatePath(pathid:number){

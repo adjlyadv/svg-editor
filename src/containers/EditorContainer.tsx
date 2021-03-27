@@ -436,8 +436,8 @@ const EditorContainer: React.FC<Props> = (props) =>  {
   useKeyboardShortcut("backspace", () => UIStore.deletePath(UIStore.editingPathId));
 
   return(
-    <div className="editor-container">
-      <svg ref={edtiorRef} className="editor-svg" width={editorInfo.width} height={editorInfo.height}
+    <div className="editor-container" >
+      <svg ref={edtiorRef} className={props.currentTool=== 'mouse_rotate_path' && toolNode ?"editor-svg rotate-mouse":"editor-svg"} width={editorInfo.width} height={editorInfo.height}
            onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}
           onDoubleClick={pathDoubleClick}>
         {addNodes()}
