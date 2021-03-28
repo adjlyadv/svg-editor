@@ -1,9 +1,10 @@
 import React from 'react';
+import { exportToSvg } from '../utils/importAndExport';
 import '../style/ToolbarContainer.scss'
 import circle from '../asset/circle.svg'
 import pen from '../asset/pen.svg'
 import mouse from '../asset/mouse.svg'
-import line from '../asset/line.svg'
+import download from '../asset/download.svg'
 import rectangle from '../asset/rectangle.svg'
 
 interface Props{
@@ -29,10 +30,10 @@ const ToolbarContainer:  React.FC<Props> = (props) => {
             <img className={props.currentTool==="rectangle"?"itmeIconselect":"itmeIcon"} id="rectangle" alt="rectangle" src={rectangle}/>
         </div>
         <div className="toolitem" onClick={handleClick}>
-            <img className={props.currentTool==="line"?"itmeIconselect":"itmeIcon"} id="line" alt="line" src={line}/>
-        </div>
-        <div className="toolitem" onClick={handleClick}>
             <img className={props.currentTool.indexOf("pen")!==-1?"itmeIconselect":"itmeIcon"} id="pen" alt="pen" src={pen}/>
+        </div>
+        <div className="toolitem" onClick={exportToSvg}>
+            <img className="itmeIcon" src={download} alt="dowmload" />
         </div>
     </div>
   )

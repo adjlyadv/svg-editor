@@ -437,12 +437,12 @@ const EditorContainer: React.FC<Props> = (props) =>  {
 
   return(
     <div className="editor-container" >
-      <svg ref={edtiorRef} className={props.currentTool=== 'mouse_rotate_path' && toolNode ?"editor-svg rotate-mouse":"editor-svg"} width={editorInfo.width} height={editorInfo.height}
+      <svg id="editor" ref={edtiorRef} className={props.currentTool=== 'mouse_rotate_path' && toolNode ?"editor-svg rotate-mouse":"editor-svg"} width={editorInfo.width} height={editorInfo.height}
            onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}
           onDoubleClick={pathDoubleClick}>
         {addNodes()}
         {pathList.map((path, index) => (
-          <Path pathId={index} path={path} currentTool={props.currentTool}/>
+          <Path  key={path.id} pathId={index} path={path} currentTool={props.currentTool}/>
         ))}
         {addOtherPath()}
 
