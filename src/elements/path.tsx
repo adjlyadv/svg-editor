@@ -234,6 +234,24 @@ const path: React.FC<Props> = observer((props: Props) => {
       )
     }
 
+  if (props.currentTool === "mouse_drag_path" && UIStore.editingPathId === id) {
+    let translate=`translate(${props.path.dragPath.x},${props.path.dragPath.y})`
+    let borderD = `M ${props.path.border[0].ctrx} ${props.path.border[0].ctry}`
+      +` C ${props.path.border[0].ctrx} ${props.path.border[0].ctry} ${props.path.border[0].ctrx} ${props.path.border[0].ctry} ${props.path.border[1].ctrx} ${props.path.border[1].ctry}`
+      +` C ${props.path.border[1].ctrx} ${props.path.border[1].ctry} ${props.path.border[1].ctrx} ${props.path.border[1].ctry} ${props.path.border[2].ctrx} ${props.path.border[2].ctry}`
+      +` C ${props.path.border[2].ctrx} ${props.path.border[2].ctry} ${props.path.border[2].ctrx} ${props.path.border[2].ctry} ${props.path.border[3].ctrx} ${props.path.border[3].ctry}`
+      +` C ${props.path.border[3].ctrx} ${props.path.border[3].ctry} ${props.path.border[3].ctrx} ${props.path.border[3].ctry} ${props.path.border[0].ctrx} ${props.path.border[0].ctry}`;
+
+    return (
+      <Fragment>
+        <path transform={translate}onClick={handleClick} d={getD(nodes, !!props.path.type)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke} fill={props.path.fill}/>
+        <path d={borderD} transform={translate} strokeWidth='2' stroke='#55f' fill='none' strokeDasharray='5'/>
+
+      </Fragment>
+
+    )
+  }
+
   if (props.currentTool === "mouse_scaling_path" && UIStore.editingPathId === id) {
     if(props.path.border.length === 4) {
       let scale = `scale(${props.path.scaleX},${props.path.scaleY})`;

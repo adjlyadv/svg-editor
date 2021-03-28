@@ -3,4 +3,29 @@
   width: 8px;
   color: #55f;
   fill: #55f;
+  border: 5px;
+
 }
+
+.react-big {
+  height: 16px;
+  width: 16px;
+  opacity: 0%;
+}
+
+#left,#right {
+  cursor: e-resize;
+}
+
+#top,#bottom {
+  cursor: s-resize;
+}
+
+#left_bottom,#right_top {
+  cursor: ne-resize;
+}
+
+#left_top,#right_bottom {
+  cursor: se-resize;
+}
+
