@@ -196,7 +196,26 @@ class UIstore {
 
   setCurrentTool = (toolName: string) => {
     this.currentTool = toolName;
-  } 
+  }
+
+  copyPath = (pathid: number) => {
+    const newPathid = this.addPath(this.pathList[pathid].type);
+    const nodelist = this.pathList[pathid].nodes;
+    for (let item of nodelist) {
+      if(item.ctr2PosY && item.ctr2PosX){
+        this.addNodes(newPathid,item.posX + 10,item.posY + 10,item.ctrPosX + 10,item.ctrPosY + 10,item.ctr2PosX + 10,item.ctr2PosY + 10);
+      }
+      else{
+        this.addNodes(newPathid,item.posX + 10,item.posY + 10,item.ctrPosX + 10,item.ctrPosY + 10);
+
+      }
+      }
+    this.pathList[newPathid].fill = this.pathList[pathid].fill;
+    this.pathList[newPathid].stroke = this.pathList[pathid].stroke;
+    this.pathList[newPathid].strokeWidth = this.pathList[pathid].strokeWidth;
+
+
+  }
 
   movePath = (pathid: number , moveX: number , moveY: number) => {
     for( let it of this.pathList[pathid].nodes){
