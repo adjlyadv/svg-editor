@@ -456,6 +456,7 @@ const EditorContainer: React.FC<Props> = (props) =>  {
   }
 
   useKeyboardShortcut("backspace", () => UIStore.deletePath(UIStore.editingPathId));
+  useKeyboardShortcut("control+c", () => UIStore.copyPath(UIStore.editingPathId));
 
   return(
     <div className="editor-container" >
