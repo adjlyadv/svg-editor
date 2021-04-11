@@ -199,7 +199,7 @@ const path: React.FC<Props> = observer((props: Props) => {
     const [bezier, setBezier] = useState<Bezier>();
     const { nodes } = props.path;
 
-    if (props.currentTool === "pen_add_node") {
+    if (props.currentTool === "pen_add_node" && UIStore.editingPathId === id) {
       const paths = getEditingPath();
       return (
         <Fragment>
