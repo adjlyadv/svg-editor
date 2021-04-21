@@ -80,7 +80,6 @@ class UIstore {
   }
 
   initPathList = (id:number,path:Path) =>{
-    // this.pathList[id] = path; 
     this.pathList.push(path);
   }
 
@@ -118,9 +117,6 @@ class UIstore {
   deletePath = (pathId: number) => {
     const id = this.pathList[pathId].id;
     this.pathList.splice(pathId,1);
-    // for (let i = 0; i < this.pathList.length; i ++) {
-    //   this.pathList[i].id = i;
-    // }
     this.editingPathId = -1;
     myIndexDB.remove(id);
   }
