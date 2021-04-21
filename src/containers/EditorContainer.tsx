@@ -293,13 +293,15 @@ const EditorContainer: React.FC<Props> = (props) =>  {
               UIStore.movePath(currentPathid,x-pos.posX,y-pos.posY)
               break;
             case 'mouse_scaling_path':{
-              document.body.style.cursor = "";
-
               const currentPathid = UIStore.editingPathId;
-              if(UIStore.pathList[currentPathid]?.scalling !== ""){
-                UIStore.scaleFinshX(currentPathid,x);
-                UIStore.scaleFinshY(currentPathid,y);
-                UIStore.setScalling(currentPathid,"");
+
+              if(currentPathid !== -1 && UIStore.pathList[currentPathid].scalling !== '') {
+                document.body.style.cursor = "";
+                if (UIStore.pathList[currentPathid].scalling !== "") {
+                  UIStore.scaleFinshX(currentPathid, x);
+                  UIStore.scaleFinshY(currentPathid, y);
+                  UIStore.setScalling(currentPathid, "");
+                }
               }
 
               break;
