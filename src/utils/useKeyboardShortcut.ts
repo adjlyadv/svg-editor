@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useReducer } from "react";
+import {UIStore} from '../stores/UIStore'
 
 const blacklistedTargets = ["INPUT", "TEXTAREA"];
 
@@ -41,6 +42,7 @@ const useKeyboardShortcut = (command:string, callback: any) => {
       if (blacklistedTargets.includes(keydownEvent.target.tagName)) return;
       if (loweredKey !== keydownEvent.key.toLowerCase()) return;
       if (keys[loweredKey] === undefined) return;
+      if (UIStore.editingPathId === -1) return;
       setKeys({ type: "key-down", key: loweredKey });
       return false;
     },
@@ -56,6 +58,7 @@ const useKeyboardShortcut = (command:string, callback: any) => {
       if (blacklistedTargets.includes(keyupEvent.target.tagName)) return;
       if (keyupEvent.key.toLowerCase() !== raisedKey) return;
       if (keys[raisedKey] === undefined) return;
+      if (UIStore.editingPathId === -1) return;
       setKeys({ type: "key-up", key: raisedKey });
       return false;
     },
