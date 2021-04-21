@@ -257,7 +257,7 @@ const path: React.FC<Props> = observer((props: Props) => {
       let scale = `scale(${props.path.scaleX},${props.path.scaleY})`;
       return(
         <Fragment>
-          <path  transform ={scale} transform-origin={props.path.scale_origin}onClick={handleClick} d={getD(nodes, !!props.path.type)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke} fill={props.path.fill}/>
+          <path  transform ={scale} vectorEffect="non-scaling-stroke" transform-origin={props.path.scale_origin}onClick={handleClick} d={getD(nodes, !!props.path.type)} strokeWidth={props.path.strokeWidth} stroke={props.path.stroke} fill={props.path.fill}/>
           <ScalingContainer pathId={id} path={props.path}/>
         </Fragment>
       )
